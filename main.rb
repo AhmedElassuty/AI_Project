@@ -19,5 +19,4 @@ Dir["./*.rb"].each {|file| require file }
 
 parser = Parser.new
 input = "∀x[P(x) ∧ Q(x) ⟹ Z(x)]"
-
 p parser.parse_sentence(input)

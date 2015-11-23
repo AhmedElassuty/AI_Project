@@ -5,12 +5,17 @@ class Parser < Whittle::Parser
   rule(EQUAL_SYMBOL) % :left
   rule(THERE_EXISTS_SYMBOL) % :left
   rule(FOR_ALL_SYMBOL) % :left
-  rule(NOT_SYMBOL)
+  
   rule(LEFT_PARENTHESIS_SYMBOL)
   rule(RIGHT_PARENTHESIS_SYMBOL)
   rule(LEFT_BRACKET_SYMBOL)
   rule(RIGHT_BRACKET_SYMBOL)
   rule(COMMA_SYMBOL)
+  rule(:not => NOT_SYMBOL) % :left ^ 6
+  rule(:and => AND_SYMBOL) % :left ^ 5
+  rule(:or  => OR_SYMBOL) % :left ^ 4
+  rule(:implies => IMPLICATION_SYMBOL) % :left ^ 3
+  rule(:biConditional =>  BI_CONDITIONAL_SYMBOL) % :left ^ 2
  
   rule(:quantifier) do |r|
     r[FOR_ALL_SYMBOL,      :small_identfier].as  { |q, v| {name: q, value: v} }
@@ -53,11 +58,14 @@ class Parser < Whittle::Parser
   end
 
   rule(:sentence) do |r|
-    r[NOT_SYMBOL, :sentence].as { |negate, e| {negated_sentence: {sentence: e} } }
+    r[:not, :sentence].as { |negate, e| {negated_sentence: {sentence: e} } }
     r[LEFT_PARENTHESIS_SYMBOL, :sentence, RIGHT_PARENTHESIS_SYMBOL].as { |_, e, _| e }
     r[LEFT_BRACKET_SYMBOL, :sentence, RIGHT_BRACKET_SYMBOL].as { |_, e, _| e }
     r[:atomic_sentence]
-    r[:sentence, :operator, :sentence].as { |a, operator , b| {operator_sentence: {s1: a, operator: operator, s2: b} } }
+    r[:sentence, :and, :sentence].as { |a, operator , b| {operator_sentence: {s1: a, operator: operator, s2: b} } }
+    r[:sentence, :or, :sentence].as { |a, operator , b| {operator_sentence: {s1: a, operator: operator, s2: b} } }
+    r[:sentence, :implies, :sentence].as { |a, operator , b| {operator_sentence: {s1: a, operator: operator, s2: b} } }
+    r[:sentence, :biConditional, :sentence].as { |a, operator , b| {operator_sentence: {s1: a, operator: operator, s2: b} } }
     r[:quantifier, :sentence].as { |quantifier, sentence| {quantifier_sentence: {quantifier: quantifier, sentence: sentence} } }
   end
 

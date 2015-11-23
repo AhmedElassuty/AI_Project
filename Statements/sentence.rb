@@ -87,9 +87,15 @@ class QuantifierSentence < Sentence
 end
 
 class ForAllSentence < QuantifierSentence 
-
+  #
+  # ForAllSentence a subclass of QuantifierSentence
+  # A Quantifier Sentence Representing For All Sentence
+  #
 end
 
 class ThereExistsSentence < QuantifierSentence 
-
+  #
+  # ThereExistsSentence a subclass of QuantifierSentence
+  # A Quantifier Sentence Representing There Exists Sentence
+  #
 end
