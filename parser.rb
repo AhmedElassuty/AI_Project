@@ -11,7 +11,6 @@ class Parser < Whittle::Parser
   rule(LEFT_BRACKET_SYMBOL)
   rule(RIGHT_BRACKET_SYMBOL)
   rule(COMMA_SYMBOL)
-  rule(:operator => OPERATORS_REGEX)
  
   rule(:quantifier) do |r|
     r[FOR_ALL_SYMBOL,      :small_identfier].as  { |q, v| {name: q, value: v} }
@@ -68,11 +67,9 @@ class Parser < Whittle::Parser
 
   start(:s)
 
-
-
   def parse_sentence(input)
     syntax_tree = self.parse(input)
-    p recursive_sentence(syntax_tree)
+    recursive_sentence(syntax_tree)
   end
 
   def recursive_sentence(syntax_tree)
@@ -90,8 +87,8 @@ class Parser < Whittle::Parser
       sentence1 = recursive_sentence(operator_node[:s1])
       sentence2 = recursive_sentence(operator_node[:s2])
       case operator_node[:operator]
-      when EQUIVALENT_SYMBOL
-        return EquivalentSentence.new(sentence1,sentence2)
+      when BI_CONDITIONAL_SYMBOL
+        return BiConditionalSentence.new(sentence1,sentence2)
       when IMPLICATION_SYMBOL
         return ImpliesSentence.new(sentence1,sentence2)
       when AND_SYMBOL

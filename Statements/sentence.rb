@@ -52,7 +52,7 @@ class ImpliesSentence < ConnectiveSentence
   #
 end
 
-class EquivalentSentence < ConnectiveSentence
+class BiConditionalSentence < ConnectiveSentence
   #
   # Class responsible for holding the ⟺ of 2 sentences
   #
