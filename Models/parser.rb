@@ -78,6 +78,7 @@ class Parser < Whittle::Parser
 
   def parse_sentence(input)
     syntax_tree = self.parse(input)
+    p syntax_tree
     recursive_sentence(syntax_tree)
   end
 
@@ -87,9 +88,9 @@ class Parser < Whittle::Parser
       quantifier_node = syntax_tree[:quantifier_sentence]
       case quantifier_node[:quantifier][:name]
       when FOR_ALL_SYMBOL
-        return ForAllSentence.new(recursive_sentence(quantifier_node[:sentence]), quantifier_node[:quantifier][:value])
+        return ForAll.new(quantifier_node[:quantifier][:value], recursive_sentence(quantifier_node[:sentence]))
       when THERE_EXISTS_SYMBOL
-        return ThereExistsSentence.new(recursive_sentence(quantifier_node[:sentence]),quantifier_node[:quantifier][:value])
+        return ThereExists.new(quantifier_node[:quantifier][:value], recursive_sentence(quantifier_node[:sentence]))
       end
     when :operator_sentence
       operator_node = syntax_tree[:operator_sentence]
@@ -97,21 +98,21 @@ class Parser < Whittle::Parser
       sentence2 = recursive_sentence(operator_node[:s2])
       case operator_node[:operator]
       when BI_CONDITIONAL_SYMBOL
-        return BiConditionalSentence.new(sentence1,sentence2)
+        return BiConditional.new(sentence1,sentence2)
       when IMPLICATION_SYMBOL
-        return ImplicationSentence.new(sentence1,sentence2)
+        return Implication.new(sentence1,sentence2)
       when AND_SYMBOL
-        return AndSentence.new(sentence1, sentence2)
+        return And.new(sentence1, sentence2)
       when OR_SYMBOL  
-        return OrSentence.new(sentence1, sentence2)   
+        return Or.new(sentence1, sentence2)   
       end
     when :negated_sentence
       negated_node = syntax_tree[:negated_sentence]
       sentence = recursive_sentence(negated_node[:sentence])
-      return NotSentence.new(sentence)
+      return Not.new(sentence)
     when :predicate_sentence
       predicate_node = syntax_tree[:predicate_sentence]
-      return PredicateSentence.new(predicate_node[:name], predicate_node[:term_list].map {|t| recursiveTerm(t) })
+      return Predicate.new(predicate_node[:name], predicate_node[:term_list].map {|t| recursiveTerm(t) })
     when :equal_sentence
       
     end

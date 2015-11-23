@@ -1,2 +1,7 @@
-Dir['./Statements/*.rb'].each {|file| require file }
-Dir['./Parser/*.rb'].each {|file| require file }
+require "./constants"
+
+require Models_PATH + "sentence"
+require Models_PATH + "term"
+require Models_PATH + "parser"
+
+Dir["./Modules/*.rb"].each {|file| require file }
