@@ -1,4 +1,5 @@
 require "whittle"
+
 class Parser < Whittle::Parser
 
   rule(:wsp => /\s+/).skip!
@@ -98,7 +99,7 @@ class Parser < Whittle::Parser
       when BI_CONDITIONAL_SYMBOL
         return BiConditionalSentence.new(sentence1,sentence2)
       when IMPLICATION_SYMBOL
-        return ImpliesSentence.new(sentence1,sentence2)
+        return ImplicationSentence.new(sentence1,sentence2)
       when AND_SYMBOL
         return AndSentence.new(sentence1, sentence2)
       when OR_SYMBOL  
@@ -127,6 +128,5 @@ class Parser < Whittle::Parser
       return FunctionTerm.new(function_node[:name], function_node[:term_list].map {|t| recursiveTerm(t) } )
     end
   end
-
 
 end

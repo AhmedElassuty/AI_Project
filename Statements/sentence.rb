@@ -46,16 +46,27 @@ class OrSentence < ConnectiveSentence
   #
 end
 
-class ImpliesSentence < ConnectiveSentence
+class ImplicationSentence < ConnectiveSentence
   #
   # Class responsible for holding the ⟹ of 2 sentences
   #
+
+  # P ⟹ Q == ¬P ∨ Q
+  def resolve
+    OrSentence.new(NotSentence.new(@sentence1), @sentence2)
+  end
 end
 
 class BiConditionalSentence < ConnectiveSentence
   #
   # Class responsible for holding the ⟺ of 2 sentences
   #
+
+  # P ⟺ Q == (P ⟹ Q) ∧ (Q ⟹ P)
+  def resolve
+    AndSentence.new(ImplicationSentence.new(@sentence1.clone, @sentence2.clone),
+      ImplicationSentence.new(@sentence2.clone, @sentence1.clone))
+  end
 end
 
 class NotSentence < Sentence
