@@ -9,7 +9,7 @@ require "./dependencies"
 # inputs = [ "∃x[P(x)∧∀x[Q(x)⟹¬P(x)]]", "∀x[P (x) ⟺ (Q(x) ∧ ∃y[Q(y) ∧ R(y, x)])]", "B(a)", "¬P (x) ∧ Q(z)" ]
 
 parser = Parser.new
-sentence = "∀x[P(x) ∧ Q(x) ⟺ Z(x)]"
+sentence = "∀x[P(x) ∧ Q(x) ⟹ Z(x)]"
 parsedSentence = parser.parse_sentence(sentence)
 
 puts parsedSentence.inspect
@@ -18,7 +18,7 @@ puts parsedSentence.inspect
 
 # CNF.execute parsedSentence
 
-# parsedSentence.prettyPrint
+p parsedSentence.pretty_print
 
 # -----------------------
 p1 = Predicate.new("P", [VariableTerm.new("x"), VariableTerm.new("y"), FunctionTerm.new("f", [VariableTerm.new("x")])])

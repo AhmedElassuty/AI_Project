@@ -29,6 +29,12 @@ class ConnectiveSentence < Sentence
     @sentence1 = sentence1
     @sentence2 = sentence2
   end
+
+  def print(symbol)
+    LEFT_PARENTHESIS_SYMBOL + @sentence1.pretty_print\
+      + symbol + @sentence2.pretty_print + RIGHT_PARENTHESIS_SYMBOL
+  end
+
 end
 
 class And < ConnectiveSentence
@@ -37,8 +43,7 @@ class And < ConnectiveSentence
   #
 
   def pretty_print
-    LEFT_PARENTHESIS_SYMBOL + @sentence1.pretty_print\
-      + AND_SYMBOL + @sentence2.pretty_print + RIGHT_PARENTHESIS_SYMBOL
+    print AND_SYMBOL
   end
 
 end
@@ -49,8 +54,7 @@ class Or < ConnectiveSentence
   #
 
   def pretty_print
-    LEFT_PARENTHESIS_SYMBOL +  @sentence1.pretty_print\
-      + OR_SYMBOL + @sentence2.pretty_print + RIGHT_PARENTHESIS_SYMBOL
+    print OR_SYMBOL
   end
 
 end
@@ -66,8 +70,7 @@ class Implication < ConnectiveSentence
   end
 
   def pretty_print
-    LEFT_PARENTHESIS_SYMBOL +  @sentence1.pretty_print\
-      + IMPLICATION_SYMBOL + @sentence2.pretty_print + RIGHT_PARENTHESIS_SYMBOL
+    print IMPLICATION_SYMBOL + "  "
   end
 
 end
@@ -84,8 +87,7 @@ class BiConditional < ConnectiveSentence
   end
 
   def pretty_print
-    LEFT_PARENTHESIS_SYMBOL + @sentence1.pretty_print + BI_CONDITIONAL_SYMBOL\
-      + @sentence2.pretty_print + RIGHT_PARENTHESIS_SYMBOL
+    print BI_CONDITIONAL_SYMBOL + "  "
   end
 
 end
