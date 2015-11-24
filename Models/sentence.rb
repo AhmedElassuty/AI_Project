@@ -41,7 +41,17 @@ class ConnectiveSentence < Sentence
   end
 
   def print(symbol)
-    if @sentence1.instance_of? Predicate and @sentence2.instance_of? Predicate
+    # reduce parenthesis 
+    # P operator Q
+    # P operator not Q
+    # not P operator Q
+    # not P operator not Q
+    if (@sentence1.instance_of? Predicate and 
+      (@sentence2.instance_of? Predicate or (@sentence2.instance_of? Not and @sentence2.sentence.instance_of? Predicate))) or
+      (@sentence2.instance_of? Predicate and 
+      (@sentence1.instance_of? Predicate or (@sentence1.instance_of? Not and @sentence1.sentence.instance_of? Predicate))) or
+      (@sentence1.instance_of? Not and @sentence1.sentence.instance_of? Predicate and
+        @sentence2.instance_of? Not and @sentence2.sentence.instance_of? Predicate)
       @sentence1.pretty_print + " " + symbol + " " + @sentence2.pretty_print
     else
       LEFT_PARENTHESIS_SYMBOL + @sentence1.pretty_print + " " \
