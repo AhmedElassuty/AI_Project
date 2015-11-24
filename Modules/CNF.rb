@@ -29,6 +29,7 @@ module CNF
   def self.move_negation_inward(sentence)
     output = sentence.step_3
     step_print("Step 3 (moving ¬ operator inward)", output)
+    output
   end
 
   # Renaming quantifier variables

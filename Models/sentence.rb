@@ -18,8 +18,11 @@ class Predicate < Sentence
   def step_1
     self.clone
   end
-  alias_method :step_2, :step_1
+  [:step_2, :step_3].each{|method| alias_method method, :step_1}
 
+  def negation
+    Not.new(self.clone)
+  end
 end
 
 class ConnectiveSentence < Sentence
@@ -38,8 +41,12 @@ class ConnectiveSentence < Sentence
   end
 
   def print(symbol)
-    LEFT_PARENTHESIS_SYMBOL + @sentence1.pretty_print\
-      + symbol + @sentence2.pretty_print + RIGHT_PARENTHESIS_SYMBOL
+    if @sentence1.instance_of? Predicate and @sentence2.instance_of? Predicate
+      @sentence1.pretty_print + " " + symbol + " " + @sentence2.pretty_print
+    else
+      LEFT_PARENTHESIS_SYMBOL + @sentence1.pretty_print + " " \
+      + symbol + " " + @sentence2.pretty_print + RIGHT_PARENTHESIS_SYMBOL
+    end
   end
 
   def step_1
@@ -56,6 +63,13 @@ class ConnectiveSentence < Sentence
     output
   end
 
+  def step_3
+    output = self.clone
+    output.sentence1 = @sentence1.step_3
+    output.sentence2 = @sentence2.step_3
+    output
+  end
+
 end
 
 class And < ConnectiveSentence
@@ -65,6 +79,10 @@ class And < ConnectiveSentence
 
   def pretty_print
     print AND_SYMBOL
+  end
+
+  def negation
+    Or.new(@sentence1.negation, @sentence2.negation)
   end
 
 end
@@ -78,6 +96,10 @@ class Or < ConnectiveSentence
     print OR_SYMBOL
   end
 
+  def negation
+    And.new(@sentence1.negation, @sentence2.negation)
+  end
+
 end
 
 class BiConditional < ConnectiveSentence
@@ -85,14 +107,14 @@ class BiConditional < ConnectiveSentence
   # Class responsible for holding the ⟺ of 2 sentences
   #
 
+  def pretty_print
+    print BI_CONDITIONAL_SYMBOL + "  "
+  end
+
   # P ⟺ Q == (P ⟹ Q) ∧ (Q ⟹ P)
   def step_1
     And.new(Implication.new(@sentence1.step_1, @sentence2.step_1),
             Implication.new(@sentence2.step_1, @sentence1.step_1))
-  end
-
-  def pretty_print
-    print BI_CONDITIONAL_SYMBOL + "  "
   end
 
 end
@@ -102,13 +124,13 @@ class Implication < ConnectiveSentence
   # Class responsible for holding the ⟹ of 2 sentences
   #
 
+  def pretty_print
+    print IMPLICATION_SYMBOL + "  "
+  end
+
   # P ⟹ Q == ¬P ∨ Q
   def step_2
     Or.new(Not.new(@sentence1.step_2), @sentence2.step_2)
-  end
-
-  def pretty_print
-    print IMPLICATION_SYMBOL + "  "
   end
 
 end
@@ -126,7 +148,15 @@ class Not < Sentence
   end
 
   def pretty_print
-    NOT_SYMBOL + LEFT_PARENTHESIS_SYMBOL +  @sentence.pretty_print + RIGHT_PARENTHESIS_SYMBOL
+    if @sentence.instance_of? Predicate
+      NOT_SYMBOL +  @sentence.pretty_print 
+    else
+      NOT_SYMBOL + LEFT_PARENTHESIS_SYMBOL +  @sentence.pretty_print + RIGHT_PARENTHESIS_SYMBOL
+    end
+  end
+
+  def negation
+    @sentence.clone.step_3
   end
 
   def step_1
@@ -139,6 +169,10 @@ class Not < Sentence
     output = self.clone
     output.sentence = @sentence.step_2
     output
+  end
+
+  def step_3
+    @sentence.negation
   end
 
 end
@@ -169,6 +203,12 @@ class QuantifierSentence  < Sentence
     output
   end
 
+  def step_3
+    output = self.clone
+    output.sentence = @sentence.step_3
+    output
+  end
+
 end
 
 class ForAll < QuantifierSentence 
@@ -181,6 +221,10 @@ class ForAll < QuantifierSentence
     FOR_ALL_SYMBOL + @variable + LEFT_BRACKET_SYMBOL + @sentence.pretty_print + RIGHT_BRACKET_SYMBOL
   end
 
+  def negation
+    ThereExists.new(@variable, @sentence.negation)
+  end
+
 end
 
 class ThereExists < QuantifierSentence 
@@ -191,6 +235,10 @@ class ThereExists < QuantifierSentence
 
   def pretty_print
     THERE_EXISTS_SYMBOL + @variable + LEFT_BRACKET_SYMBOL + @sentence.pretty_print + RIGHT_BRACKET_SYMBOL
+  end
+
+  def negation
+    ForAll.new(@variable, @sentence.negation)
   end
 
 end
