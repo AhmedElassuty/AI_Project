@@ -97,7 +97,7 @@ module CNF
           indexes << index
           count += 1
         end
-        
+
         if sentence[index].eql? "]"
           indexes << index
           count -= 1
