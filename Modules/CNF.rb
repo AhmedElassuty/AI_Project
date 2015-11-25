@@ -29,13 +29,16 @@ module CNF
   def self.move_negation_inward(sentence)
     output = sentence.step_3
     step_print("Step 3 (moving ¬ operator inward)", output)
-    output
+    rename_quantifier_variables output
   end
 
   # Renaming quantifier variables
-  def self.step4(sentence)
-    
-    
+  def self.rename_quantifier_variables(sentence)
+    str = standardlize(sentence.pretty_print)
+    parser = Parser.new
+    output = parser.parse_sentence(str)
+    step_print("Step 4 (renaming quantifier variables)", output)
+    output
   end
 
   # Skolemize
@@ -83,6 +86,40 @@ module CNF
   def self.step_print(msg, sentence)
     puts msg + ":\n"\
       + sentence.pretty_print if @@stepTrack
+  end
+
+  def self.standardlize(sentence)
+    def self.get_scope(sentence, index)
+      indexes = []
+      count = 0
+      loop do
+        if sentence[index].eql? "["
+          indexes << index
+          count += 1
+        end
+        
+        if sentence[index].eql? "]"
+          indexes << index
+          count -= 1
+        end
+
+        index += 1
+        break if index >= sentence.length or count == 0
+      end
+      return indexes.first, indexes.last
+    end
+
+    vars = [*('a'..'z')]
+    quantifiers = [FOR_ALL_SYMBOL, THERE_EXISTS_SYMBOL]
+
+    sentence.length.times do |index|
+      if quantifiers.include? sentence[index]
+        quantifierVariable = sentence[index += 1]
+        startIndex, endIndex = get_scope(sentence, index += 1)
+        sentence[(startIndex - 1)..endIndex] = sentence[(startIndex - 1)..endIndex].gsub(quantifierVariable, vars.shift)
+      end
+    end
+    sentence
   end
 
 end

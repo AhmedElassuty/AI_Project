@@ -1,10 +1,13 @@
 class Term 
-  @name = ""
-  @terms = nil
+  attr_accessor :name, :terms
   
   def initialize(name, terms)
     @name = name
     @terms = terms 
+  end
+
+  def pretty_print
+    @name
   end
 end
 
@@ -13,10 +16,6 @@ class ConstantTerm < Term
   def initialize(name)
     super(name, nil)
   end
-
-  def pretty_print
-    @name
-  end
 end
 
 class VariableTerm < Term
@@ -24,14 +23,10 @@ class VariableTerm < Term
   def initialize(name)
     super(name, nil)
   end
-
-  def pretty_print
-    @name
-  end
 end
 
 class FunctionTerm < Term
-    
+
   def initialize(name, terms)
     super(name, terms)
   end

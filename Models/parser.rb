@@ -78,7 +78,6 @@ class Parser < Whittle::Parser
 
   def parse_sentence(input)
     syntax_tree = self.parse(input)
-    p syntax_tree
     recursive_sentence(syntax_tree)
   end
 
