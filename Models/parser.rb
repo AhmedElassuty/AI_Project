@@ -3,12 +3,12 @@ require "whittle"
 class Parser < Whittle::Parser
 
   rule(:wsp => /\s+/).skip!
-  rule(EQUAL_SYMBOL) % :left
-  rule(THERE_EXISTS_SYMBOL) % :left
-  rule(FOR_ALL_SYMBOL) % :left
+  rule(:equals => EQUAL_SYMBOL)
+  rule(:there_exists => THERE_EXISTS_SYMBOL) % :left
+  rule(:for_all => FOR_ALL_SYMBOL) % :left
   
   rule(LEFT_PARENTHESIS_SYMBOL)
-  rule(RIGHT_PARENTHESIS_SYMBOL)
+  rule(RIGHT_PARENTHESIS_SYMBOL) 
   rule(LEFT_BRACKET_SYMBOL)
   rule(RIGHT_BRACKET_SYMBOL)
   rule(COMMA_SYMBOL)
@@ -19,16 +19,20 @@ class Parser < Whittle::Parser
   rule(:biConditional =>  BI_CONDITIONAL_SYMBOL) % :left ^ 2
  
   rule(:quantifier) do |r|
-    r[FOR_ALL_SYMBOL,      :small_identfier].as  { |q, v| {name: q, value: v} }
-    r[THERE_EXISTS_SYMBOL, :small_identfier].as  { |q, v| {name: q, value: v} }
+    r[:for_all,      :small_identfier].as  { |q, v| {name: q, value: v} }
+    r[:there_exists, :small_identfier].as  { |q, v| {name: q, value: v} }
+  end
+
+  rule(:quantifier_sentence) do |r|
+    r[:quantifier, LEFT_BRACKET_SYMBOL, :sentence, RIGHT_BRACKET_SYMBOL].as { |quantifier, _ , sentence, _| {quantifier_sentence: {quantifier: quantifier, sentence: sentence} } }
   end
 
   rule(:identfier => ID_REGEX).as {|s| s}
   rule(:small_identfier => SMALL_ID_REGEX).as {|s| s}
 
-  rule(:atomic_sentence) do |r|  
-    r[:term, EQUAL_SYMBOL, :term].as { |term1, operator, term2| {equal_sentence: [term1, term1]} }
+  rule(:atomic_sentence) do |r| 
     r[:predicate]
+    r[:term, :equals, :term].as { |term1, operator, term2| {equal_sentence: [term1, term1]} }
   end
 
   rule(:term) do |r|
@@ -67,7 +71,8 @@ class Parser < Whittle::Parser
     r[:sentence, :or, :sentence].as { |a, operator , b| {operator_sentence: {s1: a, operator: operator, s2: b} } }
     r[:sentence, :implies, :sentence].as { |a, operator , b| {operator_sentence: {s1: a, operator: operator, s2: b} } }
     r[:sentence, :biConditional, :sentence].as { |a, operator , b| {operator_sentence: {s1: a, operator: operator, s2: b} } }
-    r[:quantifier, :sentence].as { |quantifier, sentence| {quantifier_sentence: {quantifier: quantifier, sentence: sentence} } }
+    r[:quantifier, :quantifier_sentence].as { |quantifier , sentence,| {quantifier_sentence: {quantifier: quantifier, sentence: sentence} } }
+    r[:quantifier_sentence]
   end
 
   rule(:s) do |r|
