@@ -97,9 +97,9 @@ class Parser < Whittle::Parser
       sentence2 = recursive_sentence(operator_node[:s2])
       case operator_node[:operator]
       when BI_CONDITIONAL_SYMBOL
-        return BiConditional.new(sentence1,sentence2)
+        return BiConditional.new(sentence1, sentence2)
       when IMPLICATION_SYMBOL
-        return Implication.new(sentence1,sentence2)
+        return Implication.new(sentence1, sentence2)
       when AND_SYMBOL
         return And.new(sentence1, sentence2)
       when OR_SYMBOL  

@@ -111,12 +111,26 @@ module CNF
 
     vars = [*('a'..'z')]
     quantifiers = [FOR_ALL_SYMBOL, THERE_EXISTS_SYMBOL]
+    usedVars = []
 
     sentence.length.times do |index|
       if quantifiers.include? sentence[index]
         quantifierVariable = sentence[index += 1]
         startIndex, endIndex = get_scope(sentence, index += 1)
-        sentence[(startIndex - 1)..endIndex] = sentence[(startIndex - 1)..endIndex].gsub(quantifierVariable, vars.shift)
+
+        # rename only repeated Variables
+        scope = sentence[startIndex..endIndex]
+        usedVars << quantifierVariable
+        next unless usedVars.take(usedVars.length - 1).include? quantifierVariable
+
+        # Get new variable
+        newVar = vars.shift
+        while sentence.include? newVar
+          newVar = vars.shift
+        end
+
+        # update sentence
+        sentence[(startIndex - 1)..endIndex] = sentence[(startIndex - 1)..endIndex].gsub(quantifierVariable, newVar)
       end
     end
     sentence
