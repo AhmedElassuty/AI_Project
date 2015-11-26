@@ -9,21 +9,17 @@ require "./dependencies"
 # inputs = [ "∃x[P(x)∧∀x[Q(x)⟹¬P(x)]]", "∀x[P (x) ⟺ (Q(x) ∧ ∃y[Q(y) ∧ R(y, x)])]", "B(a)", "¬P (x) ∧ Q(z)" ]
 
 parser = Parser.new
+# --------------------Unification-------------
+
+
+# --------------------CNF---------------------
 sentence = "∀x ∀y[ P(y) ∧ Q(x) ⟺ Z(x)]"
 parsedSentence = parser.parse_sentence(sentence)
 
-# puts parsedSentence.inspect
-
-# puts parsedSentence.resolve.inspect
-
 output = CNF.execute(parsedSentence, true)
-
 puts output.inspect
 
-# https://drive.google.com/folderview?id=0BxRjwf0-N_FwZ1lleTFYNEstdmM&amp;amp;usp=sharing
-
 # p parsedSentence.pretty_print
-# # -----------------------
 # p1 = Predicate.new("P", [VariableTerm.new("x"), VariableTerm.new("y"), FunctionTerm.new("f", [VariableTerm.new("x")])])
 # # # puts p.pretty_print
 
