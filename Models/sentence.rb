@@ -15,14 +15,15 @@ class Predicate < Sentence
     @name + LEFT_PARENTHESIS_SYMBOL + @terms.map { |t| t.pretty_print}.join(",") + RIGHT_PARENTHESIS_SYMBOL
   end
 
+  def negation
+    Not.new(self.clone)
+  end
+
+  # CNF helper methods
   def step_1
     self.clone
   end
   [:step_2, :step_3].each{|method| alias_method method, :step_1}
-
-  def negation
-    Not.new(self.clone)
-  end
 end
 
 class ConnectiveSentence < Sentence
@@ -59,6 +60,7 @@ class ConnectiveSentence < Sentence
     end
   end
 
+  # CNF helper methods
   def step_1
     output = self.clone
     output.sentence1 = @sentence1.step_1
@@ -121,6 +123,7 @@ class BiConditional < ConnectiveSentence
     print BI_CONDITIONAL_SYMBOL + "  "
   end
 
+  # CNF helper methods
   # P ⟺ Q == (P ⟹ Q) ∧ (Q ⟹ P)
   def step_1
     And.new(Implication.new(@sentence1.step_1, @sentence2.step_1),
@@ -138,6 +141,7 @@ class Implication < ConnectiveSentence
     print IMPLICATION_SYMBOL + "  "
   end
 
+  # CNF helper methods
   # P ⟹ Q == ¬P ∨ Q
   def step_2
     Or.new(Not.new(@sentence1.step_2), @sentence2.step_2)
@@ -169,6 +173,7 @@ class Not < Sentence
     @sentence.clone.step_3
   end
 
+  # CNF helper methods
   def step_1
     output = self.clone
     output.sentence = @sentence.step_1
@@ -201,6 +206,7 @@ class QuantifierSentence  < Sentence
     @sentence = sentence
   end
 
+  # CNF helper methods
   def step_1
     output = self.clone
     output.sentence = @sentence.step_1

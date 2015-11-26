@@ -12,6 +12,10 @@ module CNF
   end
 
   # Resolving bi-conditional implication
+  # Input:
+  #   sentence: parsed sentence object describes the FOL sentence
+  # Output:
+  #   returns new sentence object that has all bi-conditional implication operators resolved
   def self.resolve_bi_conditional(sentence)
     output = sentence.step_1
     step_print("Step 1 (resolving bi-conditional implication)", output)
@@ -19,6 +23,10 @@ module CNF
   end
 
   # Resolving implication
+  # Input:
+  #   sentence: parsed sentence object describes the FOL sentence
+  # Output:
+  #   returns new sentence object that has all implication operators resolved
   def self.resolve_implication(sentence)
     output = sentence.step_2
     step_print("Step 2 (resolving implication)", output)
@@ -26,6 +34,10 @@ module CNF
   end
 
   # Moving not operator inward
+  # Input:
+  #   sentence: parsed sentence object describes the FOL sentence
+  # Output:
+  #   returns new sentence object where all negation signs distributed inward
   def self.move_negation_inward(sentence)
     output = sentence.step_3
     step_print("Step 3 (moving ¬ operator inward)", output)
@@ -33,6 +45,10 @@ module CNF
   end
 
   # Renaming quantifier variables
+  # Input:
+  #   sentence: parsed sentence object describes the FOL sentence
+  # Output:
+  #   returns new sentence object that has no overlapped variables
   def self.rename_quantifier_variables(sentence)
     str = standardlize(sentence.pretty_print)
     parser = Parser.new
