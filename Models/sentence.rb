@@ -3,8 +3,6 @@ end
 
 class Predicate < Sentence
   attr_accessor :name, :terms
-  @name = nil
-  @terms = []
 
   def initialize(name, terms)
     @name = name
@@ -24,6 +22,13 @@ class Predicate < Sentence
     self.clone
   end
   [:step_2, :step_3].each{|method| alias_method method, :step_1}
+
+  # Skolemize
+  def step_5(variables, toBeReplaced, constants)
+    output = self.clone
+    output.terms = @terms.map { |t| t.step_5(variables.clone, toBeReplaced.clone, constants)}
+    output
+  end
 end
 
 class ConnectiveSentence < Sentence
@@ -47,17 +52,20 @@ class ConnectiveSentence < Sentence
     # P operator not Q
     # not P operator Q
     # not P operator not Q
-    if (@sentence1.instance_of? Predicate and 
-      (@sentence2.instance_of? Predicate or (@sentence2.instance_of? Not and @sentence2.sentence.instance_of? Predicate))) or
-      (@sentence2.instance_of? Predicate and 
-      (@sentence1.instance_of? Predicate or (@sentence1.instance_of? Not and @sentence1.sentence.instance_of? Predicate))) or
-      (@sentence1.instance_of? Not and @sentence1.sentence.instance_of? Predicate and
-        @sentence2.instance_of? Not and @sentence2.sentence.instance_of? Predicate)
-      @sentence1.pretty_print + " " + symbol + " " + @sentence2.pretty_print
-    else
+    # if (@sentence1.instance_of? Predicate and 
+    #   (@sentence2.instance_of? Predicate or (@sentence2.instance_of? Not and @sentence2.sentence.instance_of? Predicate))) or
+    #   (@sentence2.instance_of? Predicate and 
+    #   (@sentence1.instance_of? Predicate or (@sentence1.instance_of? Not and @sentence1.sentence.instance_of? Predicate))) or
+    #   (@sentence1.instance_of? Not and @sentence1.sentence.instance_of? Predicate and
+    #     @sentence2.instance_of? Not and @sentence2.sentence.instance_of? Predicate)
+    #   @sentence1.pretty_print + " " + symbol + " " + @sentence2.pretty_print
+    # else
+    puts @sentence1 if @sentence1.is_a? Array
+    puts @sentence2 if @sentence2.is_a? Array
+
       LEFT_PARENTHESIS_SYMBOL + @sentence1.pretty_print + " " \
       + symbol + " " + @sentence2.pretty_print + RIGHT_PARENTHESIS_SYMBOL
-    end
+    # end
   end
 
   # CNF helper methods
@@ -79,6 +87,14 @@ class ConnectiveSentence < Sentence
     output = self.clone
     output.sentence1 = @sentence1.step_3
     output.sentence2 = @sentence2.step_3
+    output
+  end
+
+  # Skolemize
+  def step_5(variables, toBeReplaced, constants)
+    output = self.clone
+    output.sentence1 = @sentence1.step_5(variables.clone, toBeReplaced.clone, constants)
+    output.sentence2 = @sentence2.step_5(variables.clone, toBeReplaced.clone, constants)
     output
   end
 
@@ -186,8 +202,16 @@ class Not < Sentence
     output
   end
 
+  # move negation inwards
   def step_3
     @sentence.negation
+  end
+
+  # Skolemize
+  def step_5(variables, toBeReplaced, constants)
+    output = self.clone
+    output.sentence = @sentence.step_5(variables.clone, toBeReplaced.clone, constants)
+    output
   end
 
 end
@@ -241,6 +265,14 @@ class ForAll < QuantifierSentence
     ThereExists.new(@variable, @sentence.negation)
   end
 
+  # Skolemize
+  def step_5(variables, toBeReplaced, constants)
+    output = self.clone
+    variables << @variable
+    output.sentence = @sentence.step_5(variables.clone, toBeReplaced.clone, constants)
+    output
+  end
+
 end
 
 class ThereExists < QuantifierSentence 
@@ -255,6 +287,12 @@ class ThereExists < QuantifierSentence
 
   def negation
     ForAll.new(@variable, @sentence.negation)
+  end
+
+  # Skolemize
+  def step_5(variables, toBeReplaced, constants)
+    toBeReplaced << { var: @variable,  bounded: !variables.empty? }
+    @sentence.clone.step_5(variables.clone, toBeReplaced.clone, constants)
   end
 
 end

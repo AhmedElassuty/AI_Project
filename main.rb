@@ -13,11 +13,9 @@ parser = Parser.new
 
 
 # --------------------CNF---------------------
-sentence = "∀x ∀y[ P(y) ∧ Q(x) ⟺ Z(x)]"
+sentence = "∀x[P (x) ⟺ (Q(x) ∧ ∃y[Q(y) ∧ R(y, x)])]"
 parsedSentence = parser.parse_sentence(sentence)
-
 output = CNF.execute(parsedSentence, true)
-puts output.inspect
 
 # p parsedSentence.pretty_print
 # p1 = Predicate.new("P", [VariableTerm.new("x"), VariableTerm.new("y"), FunctionTerm.new("f", [VariableTerm.new("x")])])
