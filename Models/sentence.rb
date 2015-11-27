@@ -12,6 +12,7 @@ class Predicate < Sentence
   def pretty_print
     @name + LEFT_PARENTHESIS_SYMBOL + @terms.map { |t| t.pretty_print}.join(",") + RIGHT_PARENTHESIS_SYMBOL
   end
+  alias_method :step_8, :pretty_print
 
   def negation
     Not.new(self.clone)
@@ -125,6 +126,10 @@ class And < ConnectiveSentence
     output
   end
 
+  def step_8
+    @sentence1.step_8 + ") " + AND_SYMBOL + " (" + @sentence2.step_8
+  end
+
 end
 
 class Or < ConnectiveSentence
@@ -154,6 +159,11 @@ class Or < ConnectiveSentence
       output.sentence2 = @sentence2.step_7
       output
     end
+  end
+
+  # print without parenthesis
+  def step_8
+    @sentence1.step_8 + " " + OR_SYMBOL + " " + @sentence2.step_8
   end
 
 end
@@ -254,6 +264,11 @@ class Not < Sentence
     output.sentence = @sentence.clone
     output
   end
+
+  def step_8
+    NOT_SYMBOL + @sentence.step_8
+  end
+
 end
 
 class QuantifierSentence  < Sentence

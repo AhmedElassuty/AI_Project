@@ -76,13 +76,14 @@ module CNF
   def self.conjunctions_of_disjunctions(sentence)
     output = sentence.step_7
     step_print("Step 7 (conjunctions of disjunctions)", output)
-    output
+    flatted_conjunctions_and_disjunctions output
   end
 
   # Flatten nested conjunctions and disjunctions
   def self.flatted_conjunctions_and_disjunctions(sentence)
-    
-    
+    output = "(" + sentence.step_8 + ")"
+    puts "Step 8 (Flatten nested conjunctions and disjunctions):\n" + output if @@stepTrack
+    output
   end
 
   # remove OR symbols
