@@ -21,7 +21,7 @@ class Predicate < Sentence
   def step_1
     self.clone
   end
-  [:step_2, :step_3, :step_6].each{|method| alias_method method, :step_1}
+  [:step_2, :step_3, :step_6, :step_7].each{|method| alias_method method, :step_1}
 
   # Skolemize
   def step_5(variables, toBeReplaced, constants)
@@ -52,20 +52,17 @@ class ConnectiveSentence < Sentence
     # P operator not Q
     # not P operator Q
     # not P operator not Q
-    # if (@sentence1.instance_of? Predicate and 
-    #   (@sentence2.instance_of? Predicate or (@sentence2.instance_of? Not and @sentence2.sentence.instance_of? Predicate))) or
-    #   (@sentence2.instance_of? Predicate and 
-    #   (@sentence1.instance_of? Predicate or (@sentence1.instance_of? Not and @sentence1.sentence.instance_of? Predicate))) or
-    #   (@sentence1.instance_of? Not and @sentence1.sentence.instance_of? Predicate and
-    #     @sentence2.instance_of? Not and @sentence2.sentence.instance_of? Predicate)
-    #   @sentence1.pretty_print + " " + symbol + " " + @sentence2.pretty_print
-    # else
-    puts @sentence1 if @sentence1.is_a? Array
-    puts @sentence2 if @sentence2.is_a? Array
-
+    if (@sentence1.instance_of? Predicate and 
+      (@sentence2.instance_of? Predicate or (@sentence2.instance_of? Not and @sentence2.sentence.instance_of? Predicate))) or
+      (@sentence2.instance_of? Predicate and 
+      (@sentence1.instance_of? Predicate or (@sentence1.instance_of? Not and @sentence1.sentence.instance_of? Predicate))) or
+      (@sentence1.instance_of? Not and @sentence1.sentence.instance_of? Predicate and
+        @sentence2.instance_of? Not and @sentence2.sentence.instance_of? Predicate)
+      @sentence1.pretty_print + " " + symbol + " " + @sentence2.pretty_print
+    else
       LEFT_PARENTHESIS_SYMBOL + @sentence1.pretty_print + " " \
       + symbol + " " + @sentence2.pretty_print + RIGHT_PARENTHESIS_SYMBOL
-    # end
+    end
   end
 
   # CNF helper methods
@@ -98,6 +95,7 @@ class ConnectiveSentence < Sentence
     output
   end
 
+  # Discard ∀
   def step_6
     output = self.clone
     output.sentence1 = @sentence1.step_6
@@ -120,6 +118,13 @@ class And < ConnectiveSentence
     Or.new(@sentence1.negation, @sentence2.negation)
   end
 
+  def step_7
+    output = self.clone
+    output.sentence1 = @sentence1.step_7
+    output.sentence2 = @sentence2.step_7
+    output
+  end
+
 end
 
 class Or < ConnectiveSentence
@@ -133,6 +138,22 @@ class Or < ConnectiveSentence
 
   def negation
     And.new(@sentence1.negation, @sentence2.negation)
+  end
+
+  # Disribute
+  def step_7
+    if @sentence2.instance_of? And
+      sentence1 = Or.new(@sentence1.clone, @sentence2.sentence1.clone)
+      sentence1 = sentence1.step_7
+      sentence2 = Or.new(@sentence1.clone, @sentence2.sentence2.clone)
+      sentence2 = sentence2.step_7
+      And.new(sentence1, sentence2)
+    else
+      output = self.clone
+      output.sentence1 = @sentence1.step_7
+      output.sentence2 = @sentence2.step_7
+      output
+    end
   end
 
 end
@@ -220,13 +241,19 @@ class Not < Sentence
     output.sentence = @sentence.step_5(variables.clone, toBeReplaced.clone, constants)
     output
   end
-
+  
+  # Discard ∀
   def step_6
     output = self.clone
     output.sentence = @sentence.step_6
     output
   end
 
+  def step_7
+    output = self.clone
+    output.sentence = @sentence.clone
+    output
+  end
 end
 
 class QuantifierSentence  < Sentence
@@ -261,7 +288,6 @@ class QuantifierSentence  < Sentence
     output.sentence = @sentence.step_3
     output
   end
-
 end
 
 class ForAll < QuantifierSentence 
@@ -286,6 +312,7 @@ class ForAll < QuantifierSentence
     output
   end
 
+  # Discard ∀
   def step_6
     @sentence.clone.step_6
   end

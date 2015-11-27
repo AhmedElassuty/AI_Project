@@ -18,7 +18,7 @@ parsedSentence = parser.parse_sentence(sentence)
 output = CNF.execute(parsedSentence, true)
 # puts parsedSentence.pretty_print
 
-# puts output.inspect
+puts output.inspect
 
 # p1 = Predicate.new("P", [VariableTerm.new("x"), VariableTerm.new("y"), FunctionTerm.new("f", [VariableTerm.new("x")])])
 # # # puts p.pretty_print

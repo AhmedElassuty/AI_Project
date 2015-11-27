@@ -69,11 +69,14 @@ module CNF
   def self.discard_forAll(sentence)
     output = sentence.step_6
     step_print("Step 6 (discarding ∀ quantifier)", output)
-    output
+    conjunctions_of_disjunctions output
   end
 
   # Conjunctions of disjunctions
   def self.conjunctions_of_disjunctions(sentence)
+    output = sentence.step_7
+    step_print("Step 7 (conjunctions of disjunctions)", output)
+    output
   end
 
   # Flatten nested conjunctions and disjunctions
