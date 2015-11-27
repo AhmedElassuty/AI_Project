@@ -21,6 +21,10 @@ class ConstantTerm < Term
   def step_5(variables, toBeReplaced, constants)
     self.clone
   end
+
+  def get_used_variables
+    @name
+  end
 end
 
 class VariableTerm < Term
@@ -44,6 +48,10 @@ class VariableTerm < Term
       ConstantTerm.new(obj[:replacedBy])
     end
   end
+
+  def get_used_variables
+    @name
+  end
 end
 
 class FunctionTerm < Term
@@ -60,5 +68,9 @@ class FunctionTerm < Term
     term = self.clone
     term.terms = @terms.map { |t| s = t.clone; t.step_5(variables.clone, toBeReplaced.clone, constants)}
     term
+  end
+
+  def get_used_variables
+    @terms.map { |t| t.get_used_variables }
   end
 end

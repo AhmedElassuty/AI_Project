@@ -30,6 +30,10 @@ class Predicate < Sentence
     output.terms = @terms.map { |t| t.step_5(variables.clone, toBeReplaced.clone, constants)}
     output
   end
+
+  def get_used_variables
+    @terms.map { |t| t.get_used_variables }
+  end
 end
 
 class ConnectiveSentence < Sentence
@@ -53,17 +57,17 @@ class ConnectiveSentence < Sentence
     # P operator not Q
     # not P operator Q
     # not P operator not Q
-    if (@sentence1.instance_of? Predicate and 
-      (@sentence2.instance_of? Predicate or (@sentence2.instance_of? Not and @sentence2.sentence.instance_of? Predicate))) or
-      (@sentence2.instance_of? Predicate and 
-      (@sentence1.instance_of? Predicate or (@sentence1.instance_of? Not and @sentence1.sentence.instance_of? Predicate))) or
-      (@sentence1.instance_of? Not and @sentence1.sentence.instance_of? Predicate and
-        @sentence2.instance_of? Not and @sentence2.sentence.instance_of? Predicate)
-      @sentence1.pretty_print + " " + symbol + " " + @sentence2.pretty_print
-    else
+    # if (@sentence1.instance_of? Predicate and 
+    #   (@sentence2.instance_of? Predicate or (@sentence2.instance_of? Not and @sentence2.sentence.instance_of? Predicate))) or
+    #   (@sentence2.instance_of? Predicate and 
+    #   (@sentence1.instance_of? Predicate or (@sentence1.instance_of? Not and @sentence1.sentence.instance_of? Predicate))) or
+    #   (@sentence1.instance_of? Not and @sentence1.sentence.instance_of? Predicate and
+    #     @sentence2.instance_of? Not and @sentence2.sentence.instance_of? Predicate)
+    #   @sentence1.pretty_print + " " + symbol + " " + @sentence2.pretty_print
+    # else
       LEFT_PARENTHESIS_SYMBOL + @sentence1.pretty_print + " " \
       + symbol + " " + @sentence2.pretty_print + RIGHT_PARENTHESIS_SYMBOL
-    end
+    # end
   end
 
   # CNF helper methods
@@ -169,7 +173,7 @@ class Or < ConnectiveSentence
     end
   end
 
-  # print without parenthesis
+  # custom print
   def step_8
     @sentence1.step_8 + " " + OR_SYMBOL + " " + @sentence2.step_8
   end
@@ -180,6 +184,10 @@ class Or < ConnectiveSentence
 
   def step_10
     @sentence1.step_10 + ", " + @sentence2.step_10
+  end
+
+  def get_used_variables
+    @sentence1.get_used_variables + @sentence2.get_used_variables
   end
 
 end
@@ -285,6 +293,10 @@ class Not < Sentence
     NOT_SYMBOL + @sentence.step_8
   end
   [:step_9, :step_10].each{|method| alias_method method, :step_8}
+
+  def get_used_variables
+    @sentence.get_used_variables
+  end
 
 end
 

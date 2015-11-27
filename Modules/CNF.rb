@@ -82,7 +82,7 @@ module CNF
   # Flatten nested conjunctions and disjunctions
   def self.flatted_conjunctions_and_disjunctions(sentence)
     output = "  (" + sentence.step_8 + ")"
-    puts "Step 8 (flatting nested conjunctions and disjunctions):\n" + output if @@stepTrack
+    puts "Step 8 (flattening nested conjunctions and disjunctions):\n" + output if @@stepTrack
     replace_disjunctions sentence
   end
 
@@ -97,18 +97,42 @@ module CNF
   def self.replace_conjunctions(sentence)
     output = "{\n  {" + sentence.step_10 + "}\n}"
     puts "Step 10 (transforming to set of clauses):\n" + output if @@stepTrack
-    output
+    rename_clauses_variables sentence
   end
 
-  # remove rename CNF clauses
-  def self.renameCNF(sentence)
+  # rename CNF clauses
+  def self.rename_clauses_variables(sentence)
+    splittedSentence = ("(" + sentence.step_8 + ")").split("∧").map { |t| t.strip }
+    usedVars = []
+    output = "{\n"
+
+    parser = Parser.new
+    splittedSentence.each do |clause|
+      parsed = parser.parse_sentence(clause)
+      vars = parsed.get_used_variables.flatten.uniq
+
+      unless (intersection = (vars & usedVars)).empty?
+        intersection.each do |to_be_renamed|
+          number = usedVars.select { |e| e.eql? to_be_renamed}.count
+          clause = clause.gsub(/((?<=\()#{to_be_renamed}(?=\)))|((?<=,)#{to_be_renamed}(?=,))|((?<=\()#{to_be_renamed}(?=,))|((?<=,)#{to_be_renamed}(?=\)))/, to_be_renamed + number.to_s)
+        end
+      end
+      
+      clause = clause.gsub(" ∨", ",")
+      clause[0] = "{"
+      clause[clause.length - 1] = "}"
+
+      output += "  " + clause + "\n"
+      usedVars += vars
+    end
     
-    
+    output += "}"
+    puts "Step 11 (Standardizing clauses):\n" + output if @@stepTrack
   end
 
   #  Helper methods
   def self.step_print(msg, sentence)
-    puts msg + ":\n"\
+    puts "- "+ msg + ":\n"\
       + sentence.pretty_print if @@stepTrack
   end
 
