@@ -114,18 +114,18 @@ module CNF
       unless (intersection = (vars & usedVars)).empty?
         intersection.each do |to_be_renamed|
           number = usedVars.select { |e| e.eql? to_be_renamed}.count
-          clause = clause.gsub(/((?<=\()#{to_be_renamed}(?=\)))|((?<=,)#{to_be_renamed}(?=,))|((?<=\()#{to_be_renamed}(?=,))|((?<=,)#{to_be_renamed}(?=\)))/, to_be_renamed + number.to_s)
+          clause = clause.gsub(/(?<=[,\(])#{to_be_renamed}(?=[,\)])/, to_be_renamed + number.to_s)
         end
       end
       
       clause = clause.gsub(" ∨", ",")
       clause[0] = "{"
-      clause[clause.length - 1] = "}"
+      clause[clause.length - 1] = "},"
 
       output += "  " + clause + "\n"
       usedVars += vars
     end
-    
+    output[output.length - 2] = ""
     output += "}"
     puts "Step 11 (Standardizing clauses):\n" + output if @@stepTrack
   end

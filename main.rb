@@ -14,9 +14,9 @@ parser = Parser.new
 
 # --------------------CNF---------------------
 # More sentences
-FOL_sentences = ["∀x ∀y [Philo (x ) ∧ StxdentOf (y , x ) ⟹ ∃z[Book(z)∧Write(x,z) ∧ Read(y,z)]]", "∃x∃y[Philo(x) ∧ StudentOf(y,x)]"]
+# FOL_sentences = ["∀x ∀y [Philo (x ) ∧ StudentOf (y , x ) ⟹ ∃z[Book(z)∧Write(x,z) ∧ Read(y,z)]]", "∃x∃y[Philo(x) ∧ StudentOf(y,x)]"]
 
-# FOL_sentences = ["∃x[ P(x) ∧ ∀x[Q(x) ⟹ ¬P (x)]]", "∀x[P (x) ⟺ Q(x) ∧ ∃y[Q(y) ∧ R(y, x)]]"]
+FOL_sentences = ["∃x[ P(x) ∧ ∀x[Q(x) ⟹ ¬P (x)]]", "∀x[P (x) ⟺ Q(x) ∧ ∃y[Q(y) ∧ R(y, x)]]"]
 
 FOL_sentences.each do |sentence|
 parsedSentence = parser.parse_sentence(sentence)
