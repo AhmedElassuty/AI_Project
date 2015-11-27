@@ -62,12 +62,14 @@ module CNF
     constants = sentence.pretty_print.scan(/[,\(][A-Z]+[a-zA-Z0-9]*[\),]/).map {|c| c[1..-2]}.uniq
     output = sentence.step_5([], [], constants)
     step_print("Step 5 (Skolemization)", output)
-    output
+    discard_forAll output
   end
 
   # Discard forAll quantifier
   def self.discard_forAll(sentence)
-    
+    output = sentence.step_6
+    step_print("Step 6 (discarding ∀ quantifier)", output)
+    output
   end
 
   # Conjunctions of disjunctions

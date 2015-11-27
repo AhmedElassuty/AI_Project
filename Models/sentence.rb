@@ -21,7 +21,7 @@ class Predicate < Sentence
   def step_1
     self.clone
   end
-  [:step_2, :step_3].each{|method| alias_method method, :step_1}
+  [:step_2, :step_3, :step_6].each{|method| alias_method method, :step_1}
 
   # Skolemize
   def step_5(variables, toBeReplaced, constants)
@@ -95,6 +95,13 @@ class ConnectiveSentence < Sentence
     output = self.clone
     output.sentence1 = @sentence1.step_5(variables.clone, toBeReplaced.clone, constants)
     output.sentence2 = @sentence2.step_5(variables.clone, toBeReplaced.clone, constants)
+    output
+  end
+
+  def step_6
+    output = self.clone
+    output.sentence1 = @sentence1.step_6
+    output.sentence2 = @sentence2.step_6
     output
   end
 
@@ -214,6 +221,12 @@ class Not < Sentence
     output
   end
 
+  def step_6
+    output = self.clone
+    output.sentence = @sentence.step_6
+    output
+  end
+
 end
 
 class QuantifierSentence  < Sentence
@@ -271,6 +284,10 @@ class ForAll < QuantifierSentence
     variables << @variable
     output.sentence = @sentence.step_5(variables.clone, toBeReplaced.clone, constants)
     output
+  end
+
+  def step_6
+    @sentence.clone.step_6
   end
 
 end
