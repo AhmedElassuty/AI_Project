@@ -81,21 +81,23 @@ module CNF
 
   # Flatten nested conjunctions and disjunctions
   def self.flatted_conjunctions_and_disjunctions(sentence)
-    output = "(" + sentence.step_8 + ")"
-    puts "Step 8 (Flatten nested conjunctions and disjunctions):\n" + output if @@stepTrack
-    output
+    output = "  (" + sentence.step_8 + ")"
+    puts "Step 8 (flatting nested conjunctions and disjunctions):\n" + output if @@stepTrack
+    replace_disjunctions sentence
   end
 
   # remove OR symbols
   def self.replace_disjunctions(sentence)
-    
-    
+    output = "  {" + sentence.step_9 + "}"
+    puts "Step 9 (removing OR symbols):\n" + output if @@stepTrack
+    replace_conjunctions sentence
   end
 
   # remove AND symbols
   def self.replace_conjunctions(sentence)
-    
-    
+    output = "{\n  {" + sentence.step_10 + "}\n}"
+    puts "Step 10 (transforming to set of clauses):\n" + output if @@stepTrack
+    output
   end
 
   # remove rename CNF clauses
