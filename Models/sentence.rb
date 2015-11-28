@@ -22,6 +22,21 @@ class Predicate < Sentence
   def step_1
     self.clone
   end
+
+  def equals?(atom)
+    if self.instance_of?(atom.class)
+      if self.name == atom.name && self.terms.count == atom.terms.count
+        self.terms.each_with_index do |term, index|
+          return false unless term.equals?(atom.terms[index])
+        end
+      else
+          return false
+      end
+      return true
+    end
+    return false
+  end
+
   [:step_2, :step_3, :step_6, :step_7].each{|method| alias_method method, :step_1}
 
   # Skolemize
@@ -106,6 +121,13 @@ class ConnectiveSentence < Sentence
     output.sentence1 = @sentence1.step_6
     output.sentence2 = @sentence2.step_6
     output
+  end
+
+  def equals?(atom)
+    if self.instance_of?(atom.class)
+      return self.sentence1.equals?(sentence2)
+    end
+    return false
   end
 
 end
@@ -341,7 +363,7 @@ class ForAll < QuantifierSentence
   # 
 
   def pretty_print
-    FOR_ALL_SYMBOL + @variable + LEFT_BRACKET_SYMBOL + @sentence.pretty_print + RIGHT_BRACKET_SYMBOL
+    FOR_ALL_SYMBOL + @variable.name + LEFT_BRACKET_SYMBOL + @sentence.pretty_print + RIGHT_BRACKET_SYMBOL
   end
 
   def negation
@@ -370,7 +392,7 @@ class ThereExists < QuantifierSentence
   #
 
   def pretty_print
-    THERE_EXISTS_SYMBOL + @variable + LEFT_BRACKET_SYMBOL + @sentence.pretty_print + RIGHT_BRACKET_SYMBOL
+    THERE_EXISTS_SYMBOL + @variable.name + LEFT_BRACKET_SYMBOL + @sentence.pretty_print + RIGHT_BRACKET_SYMBOL
   end
 
   def negation

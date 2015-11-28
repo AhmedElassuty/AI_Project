@@ -10,13 +10,24 @@ require "./dependencies"
 
 parser = Parser.new
 # --------------------Unification-------------
+input1 = "P(a,y)"
+input2 = "P(x, f(b))"
 
+input1 = "x(y)"
+input2 = "x"
 
+p atom1 = parser.parse_atom(input1)
+p atom2 = parser.parse_atom(input2)
+
+puts atom1.equals?(atom2)
+
+Unifier.execute(atom1, atom2, stepTrack= false)
 # --------------------CNF---------------------
 # More sentences
 # FOL_sentences = ["∀x ∀y [Philo (x ) ∧ StudentOf (y , x ) ⟹ ∃z[Book(z)∧Write(x,z) ∧ Read(y,z)]]", "∃x∃y[Philo(x) ∧ StudentOf(y,x)]"]
 
 FOL_sentences = ["∃x[ P(x) ∧ ∀x[Q(x) ⟹ ¬P (x)]]", "∀x[P (x) ⟺ Q(x) ∧ ∃y[Q(y) ∧ R(y, x)]]"]
+
 
 FOL_sentences.each do |sentence|
 parsedSentence = parser.parse_sentence(sentence)

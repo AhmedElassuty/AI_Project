@@ -79,11 +79,26 @@ class Parser < Whittle::Parser
     r[:sentence]
   end
 
+  rule(:atom) do |r|
+    r[:sentence]
+    r[:term]
+  end
+
   start(:s)
 
   def parse_sentence(input)
     syntax_tree = self.parse(input)
     recursive_sentence(syntax_tree)
+  end
+
+    def parse_atom(input)
+    syntax_tree = self.parse(input, :rule => :atom)
+    case syntax_tree.keys.first
+    when :variable, :constant, :function
+      recursiveTerm(syntax_tree)
+    else
+      recursive_sentence(syntax_tree)
+    end
   end
 
   def recursive_sentence(syntax_tree)
@@ -92,9 +107,9 @@ class Parser < Whittle::Parser
       quantifier_node = syntax_tree[:quantifier_sentence]
       case quantifier_node[:quantifier][:name]
       when FOR_ALL_SYMBOL
-        return ForAll.new(quantifier_node[:quantifier][:value], recursive_sentence(quantifier_node[:sentence]))
+        return ForAll.new(VariableTerm.new(quantifier_node[:quantifier][:value]), recursive_sentence(quantifier_node[:sentence]))
       when THERE_EXISTS_SYMBOL
-        return ThereExists.new(quantifier_node[:quantifier][:value], recursive_sentence(quantifier_node[:sentence]))
+        return ThereExists.new(VariableTerm.new(quantifier_node[:quantifier][:value]), recursive_sentence(quantifier_node[:sentence]))
       end
     when :operator_sentence
       operator_node = syntax_tree[:operator_sentence]
