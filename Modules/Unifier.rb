@@ -2,8 +2,8 @@ module Unifier
 	@@stepTrack = false
 	def self.execute(atom1, atom2, stepTrack= false)
     puts "----------------- Unificication ---------------------"
-    puts "Unifying  [ #{atom1.pretty_print} ]    and  [ #{atom2.pretty_print} ]"
-    @@stepTrack = true
+    puts "Unifying  [ #{atom1.pretty_print} ]  and  [ #{atom2.pretty_print} ]"
+    @@stepTrack = stepTrack
     output = self.unify(atom1, atom2, {})
     self.print_output(output)
   end
@@ -47,24 +47,18 @@ module Unifier
   	self.print("Unifying Variable #{variable.pretty_print}  with  #{atom.pretty_print}")
 		return nil unless atom.is_a?(Term) 
 		if !(selected_variable = unification_hash.select {|key, value| key.equals?(variable) }).empty?
-			## if {var/val} E theta then return UNIFY(val, x, theta)
 			return self.unify(selected_variable.first.last, atom, unification_hash)
 		elsif !(selected_variable = unification_hash.select {|key, value| key.equals?(atom) }).empty?
-			## else if {x/val} E theta then return UNIFY(var, val, theta)
 			return self.unify(variable, selected_variable.first.last, unification_hash)
 		elsif self.can_not_unify?(variable, atom, unification_hash)
-
-			## if can not unify
 			return nil
 		else
-			## else return add {var/x} to theta
 			self.update_unification_hash(variable, atom, unification_hash)
 			return unification_hash
 		end
   end
 
   def self.unify_list_of_terms(list1, list2, unification_hash)
-  	# self.print("Unifying Lists #{list1}  and  #{list2}")
   	return nil if unification_hash.nil? or list1.count != list2.count
   	case list1.count
   	when 0
@@ -90,7 +84,6 @@ module Unifier
 
   def self.update_unification_hash(variable, atom, unification_hash)
   	unification_hash[variable] = atom
-
   	unification_hash.each do |key, value|
   		if value.instance_of?(Predicate) or value.instance_of?(FunctionTerm)
   			value.terms.each do |term|

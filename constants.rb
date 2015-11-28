@@ -16,6 +16,7 @@ RIGHT_PARENTHESIS_SYMBOL = ")"
 ## List Of Global Varibales For GRAMMAR REGEX
 ID_REGEX                 = /[A-Z]+[a-zA-Z0-9]*/
 SMALL_ID_REGEX           = /[a-z]+[a-zA-Z0-9]*/
+SPACES_REGEX             = /\s+/
 
 ## Models Path
-Models_PATH = "./Models/"
+Models_PATH              = "./Models/"

@@ -28,7 +28,7 @@ result = "failure"
 atom1 = parser.parse_atom(input1)
 atom2 = parser.parse_atom(input2)
 
-Unifier.execute(atom1, atom2, stepTrack= false)
+Unifier.execute(atom1, atom2, true)
 # --------------------CNF---------------------
 # More sentences
 # FOL_sentences = ["∀x ∀y [Philo (x ) ∧ StudentOf (y , x ) ⟹ ∃z[Book(z)∧Write(x,z) ∧ Read(y,z)]]", "∃x∃y[Philo(x) ∧ StudentOf(y,x)]"]
