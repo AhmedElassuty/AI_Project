@@ -21,9 +21,9 @@ input1 = "parents(x, father(x), mother(Bill))"
 input2 = "parents(Bill, father(y), z)"
 result = "{x/Bill, y/Bill, z/mother(Bill)}"
 
-input1 = "parents(x, father(x), mother(Jane))"
-input2 = "parents(Bill, father(y), mother(y))"
-result = "failure"
+# input1 = "parents(x, father(x), mother(Jane))"
+# input2 = "parents(Bill, father(y), mother(y))"
+# result = "failure"
 
 atom1 = parser.parse_atom(input1)
 atom2 = parser.parse_atom(input2)
