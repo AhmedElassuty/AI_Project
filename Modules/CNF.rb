@@ -6,7 +6,6 @@ module CNF
     puts "-----------------CNF Transformation---------------------"
     puts "FOL sentence: \n"\
       + sentence.pretty_print
-
     @@stepTrack = stepTrack
     resolve_bi_conditional sentence
   end
@@ -127,7 +126,7 @@ module CNF
     end
     output[output.length - 2] = ""
     output += "}"
-    puts "Step 11 (Standardizing clauses):\n" + output if @@stepTrack
+    puts "Step 11 (Standardizing clauses):\n" + output
   end
 
   #  Helper methods
