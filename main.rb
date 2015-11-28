@@ -10,30 +10,25 @@ require "./dependencies"
 
 parser = Parser.new
 # --------------------Unification-------------
-input1 = "P(a,y)"
-input2 = "P(x, f(b))"
+input1 = "Knows(John,x)"
+input2 = "Knows(y, Bill)"
 
-input1 = "x(y)"
-input2 = "x"
-
-p atom1 = parser.parse_atom(input1)
-p atom2 = parser.parse_atom(input2)
-
-puts atom1.equals?(atom2)
+atom1 = parser.parse_atom(input1)
+atom2 = parser.parse_atom(input2)
 
 Unifier.execute(atom1, atom2, stepTrack= false)
 # --------------------CNF---------------------
 # More sentences
 # FOL_sentences = ["∀x ∀y [Philo (x ) ∧ StudentOf (y , x ) ⟹ ∃z[Book(z)∧Write(x,z) ∧ Read(y,z)]]", "∃x∃y[Philo(x) ∧ StudentOf(y,x)]"]
 
-FOL_sentences = ["∃x[ P(x) ∧ ∀x[Q(x) ⟹ ¬P (x)]]", "∀x[P (x) ⟺ Q(x) ∧ ∃y[Q(y) ∧ R(y, x)]]"]
+# FOL_sentences = ["∃x[ P(x) ∧ ∀x[Q(x) ⟹ ¬P (x)]]", "∀x[P (x) ⟺ Q(x) ∧ ∃y[Q(y) ∧ R(y, x)]]"]
 
 
-FOL_sentences.each do |sentence|
-parsedSentence = parser.parse_sentence(sentence)
-output = CNF.execute(parsedSentence, true)
-# puts parsedSentence.pretty_print
-end
+# FOL_sentences.each do |sentence|
+# parsedSentence = parser.parse_sentence(sentence)
+# output = CNF.execute(parsedSentence, true)
+# # puts parsedSentence.pretty_print
+# end
 
 # p1 = Predicate.new("P", [VariableTerm.new("x"), VariableTerm.new("y"), FunctionTerm.new("f", [VariableTerm.new("x")])])
 # # # puts p.pretty_print
