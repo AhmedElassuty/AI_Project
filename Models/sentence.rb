@@ -332,7 +332,7 @@ class QuantifierSentence  < Sentence
   #
 
   def initialize(variable, sentence)
-    @variable = variable #String
+    @variable = variable
     @sentence = sentence
   end
 
@@ -367,13 +367,13 @@ class ForAll < QuantifierSentence
   end
 
   def negation
-    ThereExists.new(@variable, @sentence.negation)
+    ThereExists.new(@variable.clone, @sentence.negation)
   end
 
   # Skolemize
   def step_5(variables, toBeReplaced, constants)
     output = self.clone
-    variables << @variable
+    variables << @variable.name
     output.sentence = @sentence.step_5(variables.clone, toBeReplaced.clone, constants)
     output
   end
@@ -396,12 +396,12 @@ class ThereExists < QuantifierSentence
   end
 
   def negation
-    ForAll.new(@variable, @sentence.negation)
+    ForAll.new(@variable.clone, @sentence.negation)
   end
 
   # Skolemize
   def step_5(variables, toBeReplaced, constants)
-    toBeReplaced << { var: @variable,  bounded: !variables.empty? }
+    toBeReplaced << { var: @variable.name,  bounded: !variables.empty? }
     @sentence.clone.step_5(variables.clone, toBeReplaced.clone, constants)
   end
 
