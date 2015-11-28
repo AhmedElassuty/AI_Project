@@ -183,7 +183,7 @@ module Unifier
   	end
   	output_string = "{\n"
   	output.each do |key, value|
-  		output_string += "\t{#{key.pretty_print} / #{value.pretty_print}}, \n"
+  		output_string += "\t#{key.pretty_print} / #{value.pretty_print}, \n"
   	end
   	output_string += "}"
   	puts output_string.white
