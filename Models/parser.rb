@@ -122,7 +122,7 @@ class Parser < Whittle::Parser
         return Implication.new(sentence1, sentence2)
       when AND_SYMBOL
         return And.new(sentence1, sentence2)
-      when OR_SYMBOL  
+      when OR_SYMBOL
         return Or.new(sentence1, sentence2)   
       end
     when :negated_sentence
