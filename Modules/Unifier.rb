@@ -11,7 +11,6 @@ module Unifier
   def self.unify(atom1, atom2, unification_hash)
 
   	return nil if unification_hash.nil? ## Faild to Unify Previous	
-
   	if atom1.equals?(atom2)
   		## Identical Atoms
   		return unification_hash
@@ -81,7 +80,7 @@ module Unifier
   	return true if variable.equals?(atom)
   	if !(selected_variable = unification_hash.select {|key, value| key.equals?(atom) }).empty?
   		return self.can_not_unify?(variable, selected_variable.first.last, unification_hash)
-  	elsif atom.instance_of?(FunctionTerm)
+  	elsif atom.instance_of?(FunctionTerm) 
   		atom.terms.each do |term|
   			return true if self.can_not_unify?(variable, term, unification_hash)
   		end
@@ -91,6 +90,17 @@ module Unifier
 
   def self.update_unification_hash(variable, atom, unification_hash)
   	unification_hash[variable] = atom
+
+  	unification_hash.each do |key, value|
+  		if value.instance_of?(Predicate) or value.instance_of?(FunctionTerm)
+  			value.terms.each do |term|
+  				unless (selected_variable = unification_hash.select {|key, value| key.equals?(term) }).empty?
+  					term = selected_variable.first.last
+  				end
+  			end
+  		end
+  	end
+
   end
 
   def self.print(s)

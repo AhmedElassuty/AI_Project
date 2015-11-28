@@ -79,4 +79,18 @@ class FunctionTerm < Term
   def get_used_variables
     @terms.map { |t| t.get_used_variables }
   end
+
+  def equals?(atom)
+    if self.instance_of?(atom.class)
+      if self.name == atom.name && self.terms.count == atom.terms.count
+        self.terms.each_with_index do |term, index|
+          return false unless term.equals?(atom.terms[index])
+        end
+      else
+          return false
+      end
+      return true
+    end
+    return false
+  end
 end
