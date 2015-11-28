@@ -16,9 +16,11 @@ class Parser < Whittle::Parser
   rule(:equals => EQUAL_SYMBOL)
   
   ## There Exists Token
+  ## (left associative terminal rule)
   rule(:there_exists => THERE_EXISTS_SYMBOL) % :left
 
   ## For All Token
+  ## (left associative terminal rule)
   rule(:for_all => FOR_ALL_SYMBOL) % :left
   
   ## Left Parenthesis Token
@@ -37,18 +39,23 @@ class Parser < Whittle::Parser
   rule(COMMA_SYMBOL)
   
   ## Not Token
+  ## (higher precedence [left] value 6)
   rule(:not => NOT_SYMBOL) % :left ^ 6
   
   ## And Token
+  ## (higher precedence [left] value 5)
   rule(:and => AND_SYMBOL) % :left ^ 5
   
   ## Or Token
+  ## (higher precedence [left] value 4)
   rule(:or  => OR_SYMBOL) % :left ^ 4
   
   ## Implication Token
+  ## (higher precedence [left] value 3)
   rule(:implies => IMPLICATION_SYMBOL) % :left ^ 3
   
   ## Biconditional Implication Token
+  ## (higher precedence [left] value 2)
   rule(:biConditional =>  BI_CONDITIONAL_SYMBOL) % :left ^ 2
   
   ## Quantifier Rule
