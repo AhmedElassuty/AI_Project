@@ -1,10 +1,11 @@
+require 'colorize'
 module CNF
 
   @@stepTrack = false
 
   def self.execute(sentence, stepTrack= false)
-    puts "-----------------CNF Transformation---------------------"
-    puts "FOL sentence: \n"\
+    puts "-----------------CNF Transformation---------------------".blue
+    puts "Original FOL sentence: \n".red\
       + sentence.pretty_print
     @@stepTrack = stepTrack
     resolve_bi_conditional sentence
@@ -81,21 +82,21 @@ module CNF
   # Flatten nested conjunctions and disjunctions
   def self.flatted_conjunctions_and_disjunctions(sentence)
     output = "  (" + sentence.step_8 + ")"
-    puts "Step 8 (flattening nested conjunctions and disjunctions):\n" + output if @@stepTrack
+    puts "- Step 8 (flattening nested conjunctions and disjunctions):\n".red + output if @@stepTrack
     replace_disjunctions sentence
   end
 
   # remove OR symbols
   def self.replace_disjunctions(sentence)
     output = "  {" + sentence.step_9 + "}"
-    puts "Step 9 (removing OR symbols):\n" + output if @@stepTrack
+    puts "- Step 9 (removing OR symbols):\n".red + output if @@stepTrack
     replace_conjunctions sentence
   end
 
   # remove AND symbols
   def self.replace_conjunctions(sentence)
     output = "{\n  {" + sentence.step_10 + "}\n}"
-    puts "Step 10 (transforming to set of clauses):\n" + output if @@stepTrack
+    puts "- Step 10 (transforming to set of clauses):\n".red + output if @@stepTrack
     rename_clauses_variables sentence
   end
 
@@ -126,12 +127,12 @@ module CNF
     end
     output[output.length - 2] = ""
     output += "}"
-    puts "Step 11 (Standardizing clauses):\n" + output
+    puts "- Step 11 (Standardizing clauses):\n".red + output
   end
 
   #  Helper methods
   def self.step_print(msg, sentence)
-    puts "- "+ msg + ":\n"\
+    puts ("- "+ msg + ":\n").red\
       + sentence.pretty_print if @@stepTrack
   end
 
