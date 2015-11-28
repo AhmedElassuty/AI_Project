@@ -24,6 +24,20 @@ class Predicate < Sentence
     self.clone
   end
   [:step_2, :step_3].each{|method| alias_method method, :step_1}
+
+  def equals?(atom)
+    if self.instance_of?(atom.class)
+      if self.name == atom.name && self.terms.count == atom.terms.count
+        self.terms.each_with_index do |term, index|
+          return false unless term.equals?(atom.terms[index])
+        end
+      else
+          return false
+      end
+      return true
+    end
+    return false
+  end
 end
 
 class ConnectiveSentence < Sentence
@@ -80,6 +94,13 @@ class ConnectiveSentence < Sentence
     output.sentence1 = @sentence1.step_3
     output.sentence2 = @sentence2.step_3
     output
+  end
+
+  def equals?(atom)
+    if self.instance_of?(atom.class)
+      return self.sentence1.equals?(sentence2)
+    end
+    return false
   end
 
 end

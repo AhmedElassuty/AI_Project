@@ -9,6 +9,13 @@ class Term
   def pretty_print
     @name
   end
+
+  def equals?(atom)
+    if self.instance_of?(atom.class)
+      return self.name == atom.name
+    end
+    return false
+  end
 end
 
 class ConstantTerm < Term 

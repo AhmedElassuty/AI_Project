@@ -10,14 +10,24 @@ require "./dependencies"
 
 parser = Parser.new
 # --------------------Unification-------------
+input1 = "P(a,y)"
+input2 = "P(x, f(b))"
 
+input1 = "x(y)"
+input2 = "x"
 
+p atom1 = parser.parse_atom(input1)
+p atom2 = parser.parse_atom(input2)
+
+puts atom1.equals?(atom2)
+
+Unifier.execute(atom1, atom2, stepTrack= false)
 # --------------------CNF---------------------
 sentence = "∀x ∀y[ P(y) ∧ Q(x) ⟺ Z(x)]"
 parsedSentence = parser.parse_sentence(sentence)
 
-output = CNF.execute(parsedSentence, true)
-puts output.inspect
+# output = CNF.execute(parsedSentence, true)
+# puts output.inspect
 
 # p parsedSentence.pretty_print
 # p1 = Predicate.new("P", [VariableTerm.new("x"), VariableTerm.new("y"), FunctionTerm.new("f", [VariableTerm.new("x")])])
