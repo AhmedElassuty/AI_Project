@@ -75,9 +75,9 @@ Unification and CNF Convertor Project
 		- RIGHT_PARENTHESIS_SYMBOL = ")"
 
 	* List Of Global Varibales For GRAMMAR REGEX
-		ID_REGEX                 = /[A-Z]+[a-zA-Z0-9]*/
-		SMALL_ID_REGEX           = /[a-z]+[a-zA-Z0-9]*/
-		SPACES_REGEX             = /\s+/
+		- ID_REGEX                 = /[A-Z]+[a-zA-Z0-9]*/
+		- SMALL_ID_REGEX           = /[a-z]+[a-zA-Z0-9]*/
+		- SPACES_REGEX             = /\s+/
 
 5. External Libraries
 	- Whittle: Whittle is a LALR(1) parser. You write parsers by specifying sequences of allowable rules (which refer to other rules, or even to themselves). For each rule in your grammar, you provide a block that is invoked when the grammar is recognized.  Whittle takes care of lexer and tokenization jobs. Used in Parser [section 1].
