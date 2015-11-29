@@ -133,7 +133,7 @@ class And < ConnectiveSentence
   ## Class responsible for holding the ∧ of 2 sentences
   ##
 
-  ## Class Pretty Printer
+  # Class Pretty Printer
   def pretty_print
     print AND_SYMBOL
   end
@@ -169,7 +169,7 @@ class Or < ConnectiveSentence
   ## Class responsible for holding the ∨ of 2 sentences
   ##
 
-  ## Class Pretty Printer
+  # Class Pretty Printer
   def pretty_print
     print OR_SYMBOL
   end
@@ -195,7 +195,7 @@ class Or < ConnectiveSentence
     end
   end
 
-  # custom prints
+  # Custom prints for the last 3 steps of CNF transformation
   def step_8
     @sentence1.step_8 + " " + OR_SYMBOL + " " + @sentence2.step_8
   end

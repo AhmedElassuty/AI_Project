@@ -24,6 +24,8 @@ module CNF
   # Output:
   #   returns new sentence that has all bi-conditional implication operators resolved
   def self.resolve_bi_conditional(sentence)
+    # Recursively calling method step_1 that is responsible for
+    # resolving bi-conditional implication
     output = sentence.step_1
     step_print("Step 1 (resolving bi-conditional implication)", output)
     resolve_implication output
@@ -35,6 +37,8 @@ module CNF
   # Output:
   #   returns new sentence that has all implication operators resolved
   def self.resolve_implication(sentence)
+    # Recursively calling method step_2 that is responsible for
+    # resolving implication
     output = sentence.step_2
     step_print("Step 2 (resolving implication)", output)
     move_negation_inwards output
@@ -46,6 +50,8 @@ module CNF
   # Output:
   #   returns new sentence where all negation signs distributed inwards
   def self.move_negation_inwards(sentence)
+    # Recursively calling method step_3 that is responsible for
+    # moving ¬ operator inwards
     output = sentence.step_3
     step_print("Step 3 (moving ¬ operator inwards)", output)
     rename_quantifier_variables output
@@ -70,7 +76,10 @@ module CNF
   # Output:
   #   returns new skolemized sentence
   def self.skolemize(sentence)
+    # Extracting sentence constants
     constants = sentence.pretty_print.scan(/[,\(][A-Z]+[a-zA-Z0-9]*[\),]/).map {|c| c[1..-2]}.uniq
+    # Recursively calling method step_5 that is responsible for
+    # skolemizing ThereExist quantifiers
     output = sentence.step_5([], [], constants)
     step_print("Step 5 (Skolemization)", output)
     discard_forAll output
@@ -82,6 +91,8 @@ module CNF
   # Output:
   #   returns new sentence that has no ∀ qunatifier
   def self.discard_forAll(sentence)
+    # Recursively calling method step_6 that is responsible for
+    # discarding forAll quantifiers
     output = sentence.step_6
     step_print("Step 6 (discarding ∀ quantifier)", output)
     conjunctions_of_disjunctions output
@@ -93,6 +104,8 @@ module CNF
   # Output:
   #   converts input sentence to conjunctions of disjunctions
   def self.conjunctions_of_disjunctions(sentence)
+    # Recursively calling method step_7 that is responsible for
+    # distributing disjunctions
     output = sentence.step_7
     step_print("Step 7 (conjunctions of disjunctions)", output)
     flatted_conjunctions_and_disjunctions output
@@ -104,6 +117,8 @@ module CNF
   # Output:
   #   Flattened version of the input sentence (bracket reduced version)
   def self.flatted_conjunctions_and_disjunctions(sentence)
+    # Recursively calling method step_8 that is responsible for
+    # reducing printed brackets
     output = "  (" + sentence.step_8 + ")"
     puts "- Step 8 (flattening nested conjunctions and disjunctions):\n".red + output.white if @@stepTrack
     replace_disjunctions sentence
@@ -115,6 +130,8 @@ module CNF
   # Output:
   #   converts disjunction blocks into sets
   def self.replace_disjunctions(sentence)
+    # Recursively calling method step_9 that is responsible for
+    # replacing all disjunction sentences into clause sets
     output = "  {" + sentence.step_9 + "}"
     puts "- Step 9 (removing OR symbols):\n".red + output.white if @@stepTrack
     replace_conjunctions sentence
@@ -124,8 +141,10 @@ module CNF
   # Input:
   #   sentence: parsed FOL sentence (output of Step 7)
   # Output:
-  #   converts the input sentence into set of clause sets
+  #   converts the input sentence into set of clauses
   def self.replace_conjunctions(sentence)
+    # Recursively calling method step_10 that is responsible for
+    # replacing all conjunction sentences into set of clauses
     output = "{\n  {" + sentence.step_10 + "}\n}"
     puts "- Step 10 (transforming to set of clauses):\n".red + output.white if @@stepTrack
     rename_clauses_variables sentence
