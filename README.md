@@ -3,7 +3,7 @@ Unification and CNF Convertor Project
 1. Parser
 	A subclass of Whittle::Parser class. Its responsible for tokenizing, mapping grammar rules, parsing the input FOL strings to a syntax tree, and mapping the syntax tree to objects (data structures [section 3]).
 
-	Grammar:
+	#### Grammar:
 		1. Tokens
 			Refer to [section 4], to go through all the types of tokens supported.
 		2. Rules
@@ -40,11 +40,11 @@ Unification and CNF Convertor Project
 				- CNF Convertor: S
 
 2. Modules
-	a. Unifier
-	b. CNF
+	* Unifier
+	* CNF
 
 3. Data Structures
-	a. Sentence: A super class for all Types of Sentences
+	* Sentence: A super class for all Types of Sentences
 		- Predicate: Class responsible for holding Predicate
 		- Not: Class responsible for (¬) of a Sentence
 		- And: Class responsible for holding the ∧ of 2 sentences
@@ -53,28 +53,28 @@ Unification and CNF Convertor Project
 		- Biconditional: Class responsible for holding the ⟺ of 2 sentences
 		- ForAll: Quantifier Class Sentence Representing For All Sentence
 		- ThereExists: Quantifier Class Sentence Representing There Exists Sentence
-	b. Term
+	* Term
 		- Function: Class representing Function
 		- VariableTerm: Class representing Variable
 		- ConstantTerm: Class representing Constant
 
 4. Grammar Syntax Constants and Regex
-	a. List Of Global Varibales For GRAMMAR Symbols
-		OR_SYMBOL                = "∨"
-		AND_SYMBOL               = "∧"
-		NOT_SYMBOL               = "¬"
-		COMMA_SYMBOL             = ","
-		EQUAL_SYMBOL             = "="
-		FOR_ALL_SYMBOL           = "∀"
-		THERE_EXISTS_SYMBOL      = "∃"
-		BI_CONDITIONAL_SYMBOL    = "⟺"
-		IMPLICATION_SYMBOL       = "⟹"
-		LEFT_BRACKET_SYMBOL      = "["
-		RIGHT_BRACKET_SYMBOL     = "]"
-		LEFT_PARENTHESIS_SYMBOL  = "("
-		RIGHT_PARENTHESIS_SYMBOL = ")"
+	* List Of Global Varibales For GRAMMAR Symbols
+		- OR_SYMBOL                = "∨"
+		- AND_SYMBOL               = "∧"
+		- NOT_SYMBOL               = "¬"
+		- COMMA_SYMBOL             = ","
+		- EQUAL_SYMBOL             = "="
+		- FOR_ALL_SYMBOL           = "∀"
+		- THERE_EXISTS_SYMBOL      = "∃"
+		- BI_CONDITIONAL_SYMBOL    = "⟺"
+		- IMPLICATION_SYMBOL       = "⟹"
+		- LEFT_BRACKET_SYMBOL      = "["
+		- RIGHT_BRACKET_SYMBOL     = "]"
+		- LEFT_PARENTHESIS_SYMBOL  = "("
+		- RIGHT_PARENTHESIS_SYMBOL = ")"
 
-	b. List Of Global Varibales For GRAMMAR REGEX
+	* List Of Global Varibales For GRAMMAR REGEX
 		ID_REGEX                 = /[A-Z]+[a-zA-Z0-9]*/
 		SMALL_ID_REGEX           = /[a-z]+[a-zA-Z0-9]*/
 		SPACES_REGEX             = /\s+/
