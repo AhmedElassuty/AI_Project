@@ -1,24 +1,27 @@
 class Sentence
-  ##
-  ## A super class for all Types of Sentence
-  ##
+  #
+  # A super class for all Types of Sentence
+  #
 end
 
 class Predicate < Sentence
+  # Instance Variable
   attr_accessor :name, :terms
 
-  ## Class Constructor
+  # Class Constructor
   def initialize(name, terms)
     @name = name
     @terms = terms
   end
 
-  ## Class Pretty Printer
+  # Class Pretty Printer
   def pretty_print
     @name + LEFT_PARENTHESIS_SYMBOL + @terms.map { |t| t.pretty_print}.join(",") + RIGHT_PARENTHESIS_SYMBOL
   end
   [:step_8, :step_9, :step_10].each{|method| alias_method method, :pretty_print}
 
+  # Negation of Predicate sentence
+  # ex. P --> ¬P
   def negation
     Not.new(self.clone)
   end
@@ -44,13 +47,14 @@ class Predicate < Sentence
 
   [:step_2, :step_3, :step_6, :step_7].each{|method| alias_method method, :step_1}
 
-  # Skolemize
+  # Skolemize step
   def step_5(variables, toBeReplaced, constants)
     output = self.clone
     output.terms = @terms.map { |t| t.step_5(variables.clone, toBeReplaced.clone, constants)}
     output
   end
 
+  # Identifies the bounded variables
   def get_used_variables
     @terms.map { |t| t.get_used_variables }
   end
@@ -73,25 +77,11 @@ class ConnectiveSentence < Sentence
   end
 
   def print(symbol)
-    # reduce parenthesis 
-    # P operator Q
-    # P operator not Q
-    # not P operator Q
-    # not P operator not Q
-    # if (@sentence1.instance_of? Predicate and 
-    #   (@sentence2.instance_of? Predicate or (@sentence2.instance_of? Not and @sentence2.sentence.instance_of? Predicate))) or
-    #   (@sentence2.instance_of? Predicate and 
-    #   (@sentence1.instance_of? Predicate or (@sentence1.instance_of? Not and @sentence1.sentence.instance_of? Predicate))) or
-    #   (@sentence1.instance_of? Not and @sentence1.sentence.instance_of? Predicate and
-    #     @sentence2.instance_of? Not and @sentence2.sentence.instance_of? Predicate)
-    #   @sentence1.pretty_print + " " + symbol + " " + @sentence2.pretty_print
-    # else
-      LEFT_PARENTHESIS_SYMBOL + @sentence1.pretty_print + " " \
+    LEFT_PARENTHESIS_SYMBOL + @sentence1.pretty_print + " " \
       + symbol + " " + @sentence2.pretty_print + RIGHT_PARENTHESIS_SYMBOL
-    # end
   end
 
-  ## CNF helper methods
+  # CNF helper methods
   def step_1
     output = self.clone
     output.sentence1 = @sentence1.step_1
@@ -113,7 +103,7 @@ class ConnectiveSentence < Sentence
     output
   end
 
-  ## Skolemize
+  # Skolemize
   def step_5(variables, toBeReplaced, constants)
     output = self.clone
     output.sentence1 = @sentence1.step_5(variables.clone, toBeReplaced.clone, constants)
@@ -121,7 +111,7 @@ class ConnectiveSentence < Sentence
     output
   end
 
-  ## Discard ∀
+  # Discard ∀
   def step_6
     output = self.clone
     output.sentence1 = @sentence1.step_6
@@ -148,6 +138,7 @@ class And < ConnectiveSentence
     print AND_SYMBOL
   end
 
+  # Negation of And sentence
   def negation
     Or.new(@sentence1.negation, @sentence2.negation)
   end
@@ -183,11 +174,12 @@ class Or < ConnectiveSentence
     print OR_SYMBOL
   end
 
+  # Negation of Or sentence
   def negation
     And.new(@sentence1.negation, @sentence2.negation)
   end
 
-  ## Disribute
+  # Disribute disjunctions
   def step_7
     if @sentence2.instance_of? And
       sentence1 = Or.new(@sentence1.clone, @sentence2.sentence1.clone)
@@ -203,7 +195,7 @@ class Or < ConnectiveSentence
     end
   end
 
-  ## custom print
+  # custom prints
   def step_8
     @sentence1.step_8 + " " + OR_SYMBOL + " " + @sentence2.step_8
   end
@@ -216,6 +208,7 @@ class Or < ConnectiveSentence
     @sentence1.step_10 + ", " + @sentence2.step_10
   end
 
+  # Identifies the bounded variables
   def get_used_variables
     @sentence1.get_used_variables + @sentence2.get_used_variables
   end
@@ -232,8 +225,8 @@ class BiConditional < ConnectiveSentence
     print BI_CONDITIONAL_SYMBOL + "  "
   end
 
-  ## CNF helper methods
-  ## P ⟺ Q == (P ⟹ Q) ∧ (Q ⟹ P)
+  # CNF helper methods
+  # P ⟺ Q == (P ⟹ Q) ∧ (Q ⟹ P)
   def step_1
     And.new(Implication.new(@sentence1.step_1, @sentence2.step_1),
             Implication.new(@sentence2.step_1, @sentence1.step_1))
@@ -246,13 +239,13 @@ class Implication < ConnectiveSentence
   ## Class responsible for holding the ⟹ of 2 sentences
   ##
 
-  ## Class Pretty Printer
+  # Class Pretty Printer
   def pretty_print
     print IMPLICATION_SYMBOL + "  "
   end
 
-  ## CNF helper methods
-  ## P ⟹ Q == ¬P ∨ Q
+  # CNF helper methods
+  # P ⟹ Q == ¬P ∨ Q
   def step_2
     Or.new(Not.new(@sentence1.step_2), @sentence2.step_2)
   end
@@ -272,7 +265,7 @@ class Not < Sentence
     @sentence = sentence
   end
 
-  ## Class Pretty Printer
+  # Class Pretty Printer
   def pretty_print
     if @sentence.instance_of? Predicate
       NOT_SYMBOL +  @sentence.pretty_print 
@@ -285,7 +278,7 @@ class Not < Sentence
     @sentence.clone.step_3
   end
 
-  ## CNF helper methods
+  # CNF helper methods
   def step_1
     output = self.clone
     output.sentence = @sentence.step_1
@@ -298,12 +291,12 @@ class Not < Sentence
     output
   end
 
-  ## move negation inwards
+  # move negation inwards
   def step_3
     @sentence.negation
   end
 
-  ## Skolemize
+  # Skolemize
   def step_5(variables, toBeReplaced, constants)
     output = self.clone
     output.sentence = @sentence.step_5(variables.clone, toBeReplaced.clone, constants)
@@ -349,7 +342,7 @@ class QuantifierSentence  < Sentence
     @sentence = sentence
   end
 
-  ## CNF helper methods
+  # CNF helper methods
   def step_1
     output = self.clone
     output.sentence = @sentence.step_1
@@ -375,16 +368,17 @@ class ForAll < QuantifierSentence
   # A Quantifier Sentence Representing For All Sentence
   # 
 
-  ## Class Pretty Printer
+  # Class Pretty Printer
   def pretty_print
     FOR_ALL_SYMBOL + @variable.name + LEFT_BRACKET_SYMBOL + @sentence.pretty_print + RIGHT_BRACKET_SYMBOL
   end
 
+  # Negation of ∀ quantifier
   def negation
     ThereExists.new(@variable.clone, @sentence.negation)
   end
 
-  ## Skolemize
+  # Skolemize
   def step_5(variables, toBeReplaced, constants)
     output = self.clone
     variables << @variable.name
@@ -392,7 +386,7 @@ class ForAll < QuantifierSentence
     output
   end
 
-  ## Discard ∀
+  # Discard ∀
   def step_6
     @sentence.clone.step_6
   end
@@ -405,11 +399,12 @@ class ThereExists < QuantifierSentence
   ## A Quantifier Sentence Representing There Exists Sentence
   ##
 
-  ## Class Pretty Printer
+  # Class Pretty Printer
   def pretty_print
     THERE_EXISTS_SYMBOL + @variable.name + LEFT_BRACKET_SYMBOL + @sentence.pretty_print + RIGHT_BRACKET_SYMBOL
   end
 
+  # Negation of ∃ quantifier
   def negation
     ForAll.new(@variable.clone, @sentence.negation)
   end
