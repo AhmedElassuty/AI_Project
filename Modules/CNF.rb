@@ -1,8 +1,15 @@
 require 'colorize'
+
+# CNF transformer module
 module CNF
 
+  # @@stepTrack provides trace mode 
   @@stepTrack = false
 
+  # The entery point of CNF transformer module
+  # Inputs:
+  #   sentence: parsed FOL sentence
+  #   @optional stepTrack default False
   def self.execute(sentence, stepTrack= false)
     puts "-----------------CNF Transformation---------------------".blue
     puts "Original FOL sentence: \n".red\
@@ -13,9 +20,9 @@ module CNF
 
   # Resolving bi-conditional implication
   # Input:
-  #   sentence: parsed sentence object describes the FOL sentence
+  #   sentence: parsed FOL sentence
   # Output:
-  #   returns new sentence object that has all bi-conditional implication operators resolved
+  #   returns new sentence that has all bi-conditional implication operators resolved
   def self.resolve_bi_conditional(sentence)
     output = sentence.step_1
     step_print("Step 1 (resolving bi-conditional implication)", output)
@@ -24,9 +31,9 @@ module CNF
 
   # Resolving implication
   # Input:
-  #   sentence: parsed sentence object describes the FOL sentence
+  #   sentence: parsed FOL sentence (output of Step 1)
   # Output:
-  #   returns new sentence object that has all implication operators resolved
+  #   returns new sentence that has all implication operators resolved
   def self.resolve_implication(sentence)
     output = sentence.step_2
     step_print("Step 2 (resolving implication)", output)
@@ -35,9 +42,9 @@ module CNF
 
   # Moving not operator inwards
   # Input:
-  #   sentence: parsed sentence object describes the FOL sentence
+  #   sentence: parsed FOL sentence (output of Step 2)
   # Output:
-  #   returns new sentence object where all negation signs distributed inwards
+  #   returns new sentence where all negation signs distributed inwards
   def self.move_negation_inwards(sentence)
     output = sentence.step_3
     step_print("Step 3 (moving ¬ operator inwards)", output)
@@ -46,9 +53,9 @@ module CNF
 
   # Renaming quantifier variables
   # Input:
-  #   sentence: parsed sentence object describes the FOL sentence
+  #   sentence: parsed FOL sentence (output of Step 3)
   # Output:
-  #   returns new sentence object that has no overlapped variables
+  #   returns new sentence that has no overlapped variables
   def self.rename_quantifier_variables(sentence)
     str = standardlize(sentence.pretty_print)
     parser = Parser.new
@@ -58,6 +65,10 @@ module CNF
   end
 
   # Skolemize
+  # Input:
+  #   sentence: parsed FOL sentence (output of Step 4)
+  # Output:
+  #   returns new skolemized sentence
   def self.skolemize(sentence)
     constants = sentence.pretty_print.scan(/[,\(][A-Z]+[a-zA-Z0-9]*[\),]/).map {|c| c[1..-2]}.uniq
     output = sentence.step_5([], [], constants)
@@ -66,6 +77,10 @@ module CNF
   end
 
   # Discard forAll quantifier
+  # Input:
+  #   sentence: parsed FOL sentence (output of Step 5)
+  # Output:
+  #   returns new sentence that has no ∀ qunatifier
   def self.discard_forAll(sentence)
     output = sentence.step_6
     step_print("Step 6 (discarding ∀ quantifier)", output)
@@ -73,6 +88,10 @@ module CNF
   end
 
   # Conjunctions of disjunctions
+  # Input:
+  #   sentence: parsed FOL sentence (output of Step 6)
+  # Output:
+  #   converts input sentence to conjunctions of disjunctions
   def self.conjunctions_of_disjunctions(sentence)
     output = sentence.step_7
     step_print("Step 7 (conjunctions of disjunctions)", output)
@@ -80,27 +99,43 @@ module CNF
   end
 
   # Flatten nested conjunctions and disjunctions
+  # Input:
+  #   sentence: parsed FOL sentence (output of Step 7)
+  # Output:
+  #   Flattened version of the input sentence (bracket reduced version)
   def self.flatted_conjunctions_and_disjunctions(sentence)
     output = "  (" + sentence.step_8 + ")"
-    puts "- Step 8 (flattening nested conjunctions and disjunctions):\n".red + output if @@stepTrack
+    puts "- Step 8 (flattening nested conjunctions and disjunctions):\n".red + output.white if @@stepTrack
     replace_disjunctions sentence
   end
 
-  # remove OR symbols
+  # Remove OR symbols
+  # Input:
+  #   sentence: parsed FOL sentence (output of Step 7)
+  # Output:
+  #   converts disjunction blocks into sets
   def self.replace_disjunctions(sentence)
     output = "  {" + sentence.step_9 + "}"
-    puts "- Step 9 (removing OR symbols):\n".red + output if @@stepTrack
+    puts "- Step 9 (removing OR symbols):\n".red + output.white if @@stepTrack
     replace_conjunctions sentence
   end
 
-  # remove AND symbols
+  # Remove AND symbols
+  # Input:
+  #   sentence: parsed FOL sentence (output of Step 7)
+  # Output:
+  #   converts the input sentence into set of clause sets
   def self.replace_conjunctions(sentence)
     output = "{\n  {" + sentence.step_10 + "}\n}"
-    puts "- Step 10 (transforming to set of clauses):\n".red + output if @@stepTrack
+    puts "- Step 10 (transforming to set of clauses):\n".red + output.white if @@stepTrack
     rename_clauses_variables sentence
   end
 
-  # rename CNF clauses
+  # Rename CNF clauses
+  # Input:
+  #   sentence: parsed FOL sentence (output of Step 7)
+  # Output:
+  #   renames clauses variables
   def self.rename_clauses_variables(sentence)
     splittedSentence = ("(" + sentence.step_8 + ")").split("∧").map { |t| t.strip }
     usedVars = []
@@ -127,15 +162,28 @@ module CNF
     end
     output[output.length - 2] = ""
     output += "}"
-    puts "- Step 11 (Standardizing clauses):\n".red + output
+    puts "- Step 11 (Standardizing clauses):\n".red + output.white
   end
 
   #  Helper methods
+
+  # Inputs:
+  #  msg     : the name of the step
+  #  sentence: the output sentence of the corresponding step
+  # Output:
+  #  prints the input sentence in a readable format using pretty_print method
   def self.step_print(msg, sentence)
     puts ("- "+ msg + ":\n").red\
-      + sentence.pretty_print if @@stepTrack
+      + sentence.pretty_print.white if @@stepTrack
   end
 
+  # Inputs:
+  #   sentence          : FOL sentence @string
+  #   index             : the index of the target boundry symbol
+  #   leftBoundrySymbol : opening symbol
+  #   rightBoundrySymbol: closing symbol
+  # Output:
+  #   the range covered by the specified boundries
   def self.get_scope(sentence, index, leftBoundrySymbol, rightBoundrySymbol)
     indexes = []
     count = 0
@@ -156,6 +204,10 @@ module CNF
     return indexes.first, indexes.last
   end
 
+  # Input:
+  #  sentence: @string FOL sentence
+  # Output:
+  #  renames all overlapped variables associated with sentence quantifiers
   def self.standardlize(sentence)
     vars = [*('a'..'z')]
     quantifiers = [FOR_ALL_SYMBOL, THERE_EXISTS_SYMBOL]
