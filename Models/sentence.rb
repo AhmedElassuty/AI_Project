@@ -48,9 +48,9 @@ class Predicate < Sentence
   [:step_2, :step_3, :step_6, :step_7].each{|method| alias_method method, :step_1}
 
   # Skolemize step
-  def step_5(variables, toBeReplaced, constants)
+  def step_5(variables, toBeReplaced)
     output = self.clone
-    output.terms = @terms.map { |t| t.step_5(variables.clone, toBeReplaced.clone, constants)}
+    output.terms = @terms.map { |t| t.step_5(variables.clone, toBeReplaced.clone)}
     output
   end
 
@@ -104,10 +104,10 @@ class ConnectiveSentence < Sentence
   end
 
   # Skolemize
-  def step_5(variables, toBeReplaced, constants)
+  def step_5(variables, toBeReplaced)
     output = self.clone
-    output.sentence1 = @sentence1.step_5(variables.clone, toBeReplaced.clone, constants)
-    output.sentence2 = @sentence2.step_5(variables.clone, toBeReplaced.clone, constants)
+    output.sentence1 = @sentence1.step_5(variables.clone, toBeReplaced.clone)
+    output.sentence2 = @sentence2.step_5(variables.clone, toBeReplaced.clone)
     output
   end
 
@@ -185,6 +185,12 @@ class Or < ConnectiveSentence
       sentence1 = Or.new(@sentence1.clone, @sentence2.sentence1.clone)
       sentence1 = sentence1.step_7
       sentence2 = Or.new(@sentence1.clone, @sentence2.sentence2.clone)
+      sentence2 = sentence2.step_7
+      And.new(sentence1, sentence2)
+    elsif @sentence1.instance_of? And
+      sentence1 = Or.new(@sentence1.sentence1.clone, @sentence2.clone)
+      sentence1 = sentence1.step_7
+      sentence2 = Or.new(@sentence1.sentence2.clone, @sentence2.clone)
       sentence2 = sentence2.step_7
       And.new(sentence1, sentence2)
     else
@@ -297,9 +303,9 @@ class Not < Sentence
   end
 
   # Skolemize
-  def step_5(variables, toBeReplaced, constants)
+  def step_5(variables, toBeReplaced)
     output = self.clone
-    output.sentence = @sentence.step_5(variables.clone, toBeReplaced.clone, constants)
+    output.sentence = @sentence.step_5(variables.clone, toBeReplaced.clone)
     output
   end
   
@@ -379,10 +385,10 @@ class ForAll < QuantifierSentence
   end
 
   # Skolemize
-  def step_5(variables, toBeReplaced, constants)
+  def step_5(variables, toBeReplaced)
     output = self.clone
     variables << @variable.name
-    output.sentence = @sentence.step_5(variables.clone, toBeReplaced.clone, constants)
+    output.sentence = @sentence.step_5(variables.clone, toBeReplaced.clone)
     output
   end
 
@@ -410,9 +416,11 @@ class ThereExists < QuantifierSentence
   end
 
   # Skolemize
-  def step_5(variables, toBeReplaced, constants)
-    toBeReplaced << { var: @variable.name,  bounded: !variables.empty? }
-    @sentence.clone.step_5(variables.clone, toBeReplaced.clone, constants)
+  def step_5(variables, toBeReplaced)
+    freeFuncNames = [*('a'..'z')] - Term.funcNames
+    Term.funcNames << freeFuncNames.last
+    toBeReplaced << { var: @variable.name,  bounded: !variables.empty?, func_name: freeFuncNames.last}
+    @sentence.clone.step_5(variables.clone, toBeReplaced.clone)
   end
 
 end

@@ -1,5 +1,9 @@
 class Term 
-  attr_accessor :name, :terms
+  attr_accessor :name, :terms 
+
+  @@funcNames  = []
+  @@constNames = []
+  @@varNames   = []
   
   ## Class Constructor
   def initialize(name, terms)
@@ -18,16 +22,36 @@ class Term
     end
     return false
   end
+
+  def self.funcNames
+    @@funcNames
+  end
+
+  def self.varNames
+    @@varNames
+  end
+
+  def self.constNames
+    @@constNames
+  end
+
+  def self.reset
+    @@funcNames  = []
+    @@constNames = []
+    @@varNames   = []
+  end
+
 end
 
 class ConstantTerm < Term 
 
   ## Class Constructor
   def initialize(name)
+    @@constNames << name
     super(name, nil)
   end
 
-  def step_5(variables, toBeReplaced, constants)
+  def step_5(variables, toBeReplaced)
     self.clone
   end
 
@@ -40,20 +64,20 @@ class VariableTerm < Term
     
   ## Class Constructor
   def initialize(name)
+    @@varNames << name
     super(name, nil)
   end
 
-  def step_5(variables, toBeReplaced, constants)
+  def step_5(variables, toBeReplaced)
     return self.clone unless toBeReplaced.map { |t| t[:var] }.include? self.name
     obj = toBeReplaced.detect { |v| v[:var].eql? self.name }
     if obj[:bounded]
       terms = variables.map { |var| VariableTerm.new(var)}
-      FunctionTerm.new("f", terms)
+      FunctionTerm.new(obj[:func_name], terms)
     else
       if obj[:replacedBy].nil?
-        availableConstants = [*('A'..'Z')] - constants
-        constants << availableConstants.pop
-        obj[:replacedBy] = constants.last
+        freeConstants = [*('A'..'Z')] - Term.constNames
+        obj[:replacedBy] = freeConstants.last
       end
       ConstantTerm.new(obj[:replacedBy])
     end
@@ -68,6 +92,7 @@ class FunctionTerm < Term
 
   ## Class Constructor
   def initialize(name, terms)
+    @@funcNames << name
     super(name, terms)
   end
 
@@ -76,9 +101,9 @@ class FunctionTerm < Term
     @name + LEFT_PARENTHESIS_SYMBOL + @terms.map { |t| t.pretty_print}.join(",") + RIGHT_PARENTHESIS_SYMBOL
   end
 
-  def step_5(variables, toBeReplaced, constants)
+  def step_5(variables, toBeReplaced)
     term = self.clone
-    term.terms = @terms.map { |t| s = t.clone; t.step_5(variables.clone, toBeReplaced.clone, constants)}
+    term.terms = @terms.map { |t| s = t.clone; t.step_5(variables.clone, toBeReplaced.clone)}
     term
   end
 

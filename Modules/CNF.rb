@@ -76,11 +76,9 @@ module CNF
   # Output:
   #   returns new skolemized sentence
   def self.skolemize(sentence)
-    # Extracting sentence constants
-    constants = sentence.pretty_print.scan(/[,\(][A-Z]+[a-zA-Z0-9]*[\),]/).map {|c| c[1..-2]}.uniq
     # Recursively calling method step_5 that is responsible for
     # skolemizing ThereExist quantifiers
-    output = sentence.step_5([], [], constants)
+    output = sentence.step_5([], [])
     step_print("Step 5 (Skolemization)", output)
     discard_forAll output
   end
@@ -228,7 +226,6 @@ module CNF
   # Output:
   #  renames all overlapped variables associated with sentence quantifiers
   def self.standardlize(sentence)
-    vars = [*('a'..'z')]
     quantifiers = [FOR_ALL_SYMBOL, THERE_EXISTS_SYMBOL]
     usedVars = []
 
@@ -243,13 +240,10 @@ module CNF
         next unless usedVars.take(usedVars.length - 1).include? quantifierVariable
 
         # Get new variable
-        newVar = vars.shift
-        while sentence.include? newVar
-          newVar = vars.shift
-        end
-
+        freeVars = [*('a'..'z')] - Term.varNames - usedVars
+        usedVars << freeVars.first
         # update sentence
-        sentence[(startIndex - 1)..endIndex] = sentence[(startIndex - 1)..endIndex].gsub(quantifierVariable, newVar)
+        sentence[(startIndex - 1)..endIndex] = sentence[(startIndex - 1)..endIndex].gsub(quantifierVariable, usedVars.last)
       end
     end
     sentence

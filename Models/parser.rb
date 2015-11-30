@@ -193,6 +193,7 @@ class Parser < Whittle::Parser
   #      @input: The sentence string to be parsed
   #
   def parse_sentence(input)
+    Term.reset
     syntax_tree = self.parse(input)
     recursive_sentence(syntax_tree)
   end
