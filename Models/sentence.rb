@@ -4,6 +4,20 @@ class Sentence
   #
 end
 
+class EqualSentence < Sentence
+  attr_accessor :term1, :term2
+
+  def initialize(term1, term2)
+    @term1 = term1
+    @term2 = term2
+  end
+
+  # Class Pretty Printer
+  def pretty_print
+    LEFT_PARENTHESIS_SYMBOL + @term1 + " = " + @term2 + RIGHT_PARENTHESIS_SYMBOL
+  end
+end
+
 class Predicate < Sentence
   # Instance Variable
   attr_accessor :name, :terms
@@ -148,6 +162,24 @@ class And < ConnectiveSentence
     output.sentence1 = @sentence1.step_7
     output.sentence2 = @sentence2.step_7
     output
+    # if @sentence2.instance_of? Or
+    #   sentence1 = And.new(@sentence1.clone, @sentence2.sentence1.clone)
+    #   sentence1 = sentence1.step_7
+    #   sentence2 = And.new(@sentence1.clone, @sentence2.sentence2.clone)
+    #   sentence2 = sentence2.step_7
+    #   Or.new(sentence1, sentence2)
+    # elsif @sentence1.instance_of? Or
+    #   sentence1 = And.new(@sentence1.sentence1.clone, @sentence2.clone)
+    #   sentence1 = sentence1.step_7
+    #   sentence2 = And.new(@sentence1.sentence2.clone, @sentence2.clone)
+    #   sentence2 = sentence2.step_7
+    #   Or.new(sentence1, sentence2)
+    # else
+    #   output = self.clone
+    #   output.sentence1 = @sentence1.step_7
+    #   output.sentence2 = @sentence2.step_7
+    #   output
+    # end
   end
 
   def step_8

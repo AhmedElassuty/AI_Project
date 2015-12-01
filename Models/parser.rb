@@ -252,7 +252,8 @@ class Parser < Whittle::Parser
       predicate_node = syntax_tree[:predicate_sentence]
       return Predicate.new(predicate_node[:name], predicate_node[:term_list].map {|t| recursiveTerm(t) })
     when :equal_sentence
-      
+      equal_node = syntax_tree[:equal_sentence]
+      return EqualSentence.new(recursiveTerm(equal_node.first), recursiveTerm(equal_node.last))
     end
   end
 

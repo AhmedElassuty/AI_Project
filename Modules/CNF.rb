@@ -8,9 +8,11 @@ module CNF
 
   # The entery point of CNF transformer module
   # Inputs:
-  #   sentence: parsed FOL sentence
+  #   sentence: @string FOL sentence
   #   @optional stepTrack default False
-  def self.execute(sentence, stepTrack= false)
+  def self.execute(fol_sentence, stepTrack= false)
+    parser = Parser.new
+    sentence = parser.parse_sentence(fol_sentence)
     puts "-----------------CNF Transformation---------------------".blue
     puts "Original FOL sentence: \n".red\
       + sentence.pretty_print
@@ -232,18 +234,21 @@ module CNF
     sentence.length.times do |index|
       if quantifiers.include? sentence[index]
         quantifierVariable = sentence[index += 1]
-        startIndex, endIndex = get_scope(sentence, index += 1, "[", "]")
-
+        
         # rename only repeated Variables
-        scope = sentence[startIndex..endIndex]
         usedVars << quantifierVariable
         next unless usedVars.take(usedVars.length - 1).include? quantifierVariable
+
+        # get the scope of the current quantifier
+        startIndex, endIndex = get_scope(sentence, index += 1, "[", "]")
 
         # Get new variable
         freeVars = [*('a'..'z')] - Term.varNames - usedVars
         usedVars << freeVars.first
         # update sentence
-        sentence[(startIndex - 1)..endIndex] = sentence[(startIndex - 1)..endIndex].gsub(quantifierVariable, usedVars.last)
+        sentence[(startIndex - 1)..endIndex] = sentence[(startIndex - 1)..endIndex]
+          .gsub(/(?<=[,\(])#{quantifierVariable}(?=[,\)])/, usedVars.last)
+        sentence[index - 1] = usedVars.last
       end
     end
     sentence

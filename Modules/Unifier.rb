@@ -6,12 +6,15 @@ module Unifier
   # Method Signature: execute
   # The unifier module execution method, calls the unificaition and returns its output
   # Params:
-  #      @atom1: A sentence or a Term to unifty with @atom2
-  #      @atom2: A sentence or a Term to unifty with @atom1
+  #      @input1: A sentence or a Term to unifty with @input2
+  #      @input2: A sentence or a Term to unifty with @input1
   #      @stepTrack: Boolean that enables/disables printing 
   #                  detailed unification proccess
   #
-	def self.execute(atom1, atom2, stepTrack= false)
+	def self.execute(input1, input2, stepTrack= false)
+    parser = Parser.new
+    atom1 = parser.parse_atom(input1)
+    atom2 = parser.parse_atom(input2)
     puts "----------------- Unificication ---------------------".blue
     puts "Unifying  [ #{atom1.pretty_print} ]  and  [ #{atom2.pretty_print} ]".red
     @@stepTrack = stepTrack
